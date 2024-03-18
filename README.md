@@ -18,3 +18,5 @@
 **TypeScript Essentials:** [link](https://rolling-scopes-school.github.io/naya252-JSFE2023Q4/typescript-essentials/)
 
 **News API:** [link](https://rolling-scopes-school.github.io/naya252-JSFE2023Q4/news-api/)
+
+**RSS Puzzle:** [link](https://naya252-puzzle.netlify.app/)
