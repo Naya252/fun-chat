@@ -20,3 +20,5 @@
 **News API:** [link](https://rolling-scopes-school.github.io/naya252-JSFE2023Q4/news-api/)
 
 **RSS Puzzle:** [link](https://naya252-puzzle.netlify.app/)
+
+**Async Race:** [link](https://naya252-async-race.netlify.app/#)
