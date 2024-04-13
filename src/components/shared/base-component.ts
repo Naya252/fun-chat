@@ -1,7 +1,3 @@
-// interface HTMLElementTagNameMap {
-//   a: HTMLAnchorElement;
-// }
-
 const formatClasses = (classNames: (string | undefined)[]): string[] => {
   let classes: string[] = [];
 
@@ -17,16 +13,16 @@ const formatClasses = (classNames: (string | undefined)[]): string[] => {
   return classes;
 };
 
-export default class BaseComponent {
-  protected readonly element: HTMLElement;
+export default class BaseComponent<T extends HTMLElement = HTMLElement> {
+  protected readonly element: T;
 
   constructor(
-    tag = 'div',
+    tag: keyof HTMLElementTagNameMap,
     classNames: (string | undefined)[] = [],
-    attributes: Record<string, string> = {},
+    attributes: Partial<T> = {},
     textContent = '',
   ) {
-    this.element = document.createElement(tag);
+    this.element = document.createElement(tag) as T;
 
     const classes = classNames.filter((el): el is string => typeof el === 'string');
     this.setClasses(classes);
@@ -68,17 +64,11 @@ export default class BaseComponent {
     this.element.innerHTML = string;
   }
 
-  public setAttributes(attrs: Record<string, string>): void {
+  public setAttributes(attrs: Partial<T>): void {
     Object.entries(attrs).forEach(([attrName, attrValue]) => {
       this.element.setAttribute(attrName, attrValue);
     });
   }
-
-  // public setAttributes(attrs: Partial<HTMLElementTagNameMap[K]>): void {
-  //   Object.entries(attrs).forEach(([attrName, attrValue]) => {
-  //     this.element.setAttribute(attrName, attrValue);
-  //   });
-  // }
 
   public addListener(eventName: string, listener: EventListenerOrEventListenerObject): void {
     this.element.addEventListener(eventName, listener);
