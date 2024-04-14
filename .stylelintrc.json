@@ -1,6 +1,6 @@
 {
-  "extends": ["stylelint-config-standard", "stylelint-config-recommended-scss", "stylelint-config-idiomatic-order"],
-  "plugins": ["stylelint-scss", "stylelint-order"],
+  "extends": ["stylelint-config-standard", "stylelint-config-recommended", "stylelint-config-idiomatic-order"],
+  "plugins": ["stylelint-order"],
   "rules": {
     "selector-class-pattern": "^[a-z]([-]?[a-z0-9]+)*(__[a-z0-9]([-]?[a-z0-9]+)*)?(--[a-z0-9]([-]?[a-z0-9]+)*)?$",
     "import-notation": "string"

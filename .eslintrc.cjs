@@ -6,7 +6,7 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    'airbnb',
+    'airbnb-base',
     'eslint:recommended',
     'eslint-config-standard',
     'plugin:@typescript-eslint/recommended',
@@ -20,9 +20,9 @@ module.exports = {
     sourceType: 'module',
     project: ['**/tsconfig.json'],
   },
-  linterOptions: {
-    noInlineConfig: true,
-  },
+
+  noInlineConfig: true,
+
   rules: {
     curly: ['error', 'all'],
     'max-lines-per-function': ['error', 40],
@@ -37,7 +37,6 @@ module.exports = {
         },
       },
     ],
-    '@typescript-eslint/consistent-type-assertions': ['error', { assertionStyle: 'never' }],
     '@typescript-eslint/explicit-function-return-type': 'error',
     '@typescript-eslint/consistent-type-exports': 'error',
     '@typescript-eslint/consistent-type-imports': 'error',
@@ -45,6 +44,7 @@ module.exports = {
     '@typescript-eslint/consistent-type-definitions': ['error', 'type'],
     'import/extensions': ['error', 'ignorePackages', { js: 'never', ts: 'never' }],
     'import/no-extraneous-dependencies': ['error', { includeTypes: true }],
+    'no-unused-expressions': 'error',
   },
   overrides: [
     {

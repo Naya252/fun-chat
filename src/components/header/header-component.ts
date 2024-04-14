@@ -1,5 +1,5 @@
 import BaseComponent from '@/components/shared/base-component';
-import AppRouter from '@/router/router';
+import type AppRouter from '@/router/router';
 import { ROUTES } from '@/router/pathes';
 
 const createTitle = (): BaseComponent => {
@@ -10,8 +10,8 @@ const createTitle = (): BaseComponent => {
 };
 
 export default class Header extends BaseComponent {
-  router: AppRouter;
-  links: BaseComponent[];
+  private router: AppRouter;
+  private links: BaseComponent[];
 
   constructor(router: AppRouter) {
     super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'border-b', 'border-slate-700']);

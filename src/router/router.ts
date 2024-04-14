@@ -1,7 +1,7 @@
 import Router, { type Route } from '@/lib/router';
-import { ROUTES } from './pathes';
 import type BaseComponent from '@/components/shared/base-component';
 import store from '@/store/store';
+import { ROUTES } from './pathes';
 
 export default class AppRouter extends Router {
   public routerOutlet: BaseComponent;
@@ -15,7 +15,7 @@ export default class AppRouter extends Router {
         { name: ROUTES.Info, module: import('@/components/info/info-page') },
       ].map(({ name, module }) => ({
         name,
-        component: async () => {
+        component: async (): Promise<BaseComponent> => {
           const { default: createPage } = await module;
           return createPage();
         },
@@ -40,13 +40,11 @@ export default class AppRouter extends Router {
 
     if (!isAuth) {
       newRoute = 'login';
-    } else {
-      if (newRoute === '') {
-        newRoute = window.location.pathname.slice(1);
+    } else if (newRoute === '') {
+      newRoute = window.location.pathname.slice(1);
 
-        if (newRoute === '') {
-          newRoute = 'chat';
-        }
+      if (newRoute === '') {
+        newRoute = 'chat';
       }
     }
 

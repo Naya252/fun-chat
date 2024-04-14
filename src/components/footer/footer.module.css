@@ -3,12 +3,12 @@
   height: 40px;
   background: center / contain no-repeat url('/src/assets/img/rss.svg');
   cursor: pointer;
-  filter: drop-shadow(1px 1px 2px #000000) brightness(0.4);
+  filter: drop-shadow(1px 1px 2px #000) brightness(0.4);
   transition: all 0.3s ease;
 }
 
 .rs-logo:hover {
-  filter: drop-shadow(1px 1px 2px #000000) brightness(0.8);
+  filter: drop-shadow(1px 1px 2px #000) brightness(0.8);
 }
 
 .github {
@@ -16,10 +16,10 @@
   height: 50px;
   background: center / contain no-repeat url('/src/assets/img/github.svg');
   cursor: pointer;
-  filter: drop-shadow(1px 1px 2px #000000) brightness(0.4);
+  filter: drop-shadow(1px 1px 2px #000) brightness(0.4);
   transition: all 0.3s ease;
 }
 
 .github:hover {
-  filter: drop-shadow(1px 1px 2px #000000) brightness(0.8);
+  filter: drop-shadow(1px 1px 2px #000) brightness(0.8);
 }

@@ -34,7 +34,7 @@ export default class App {
     this.appContainer.append(this.header, this.main, this.footer);
   }
 
-  public async init(): Promise<void> {
+  public init(): void {
     const { body } = document;
 
     body.className = 'antialiased text-slate-500 dark:text-slate-400';

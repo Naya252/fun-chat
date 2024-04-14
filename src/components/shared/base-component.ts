@@ -66,7 +66,9 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
 
   public setAttributes(attrs: Partial<T>): void {
     Object.entries(attrs).forEach(([attrName, attrValue]) => {
-      this.element.setAttribute(attrName, attrValue);
+      if (typeof attrValue === 'string') {
+        this.element.setAttribute(attrName, attrValue);
+      }
     });
   }
 
