@@ -1,6 +1,8 @@
 import BaseComponent from '@/components/shared/base-component';
 import type AppRouter from '@/router/router';
+import emitter from '@/utils/event-emitter';
 import { ROUTES } from '@/router/pathes';
+import store from '@/store/store';
 
 const createTitle = (): BaseComponent => {
   const title = new BaseComponent('h1', [], {}, 'Fun chat');
@@ -26,6 +28,7 @@ export default class Header extends BaseComponent {
     container.append(subcontainer);
     subcontainer.append(title, linksWrapper);
     this.append(container);
+    emitter.on('login', () => this.changeLinks());
   }
 
   private createNav(): BaseComponent {
@@ -68,6 +71,23 @@ export default class Header extends BaseComponent {
       return linkWrapper;
     });
     return links;
+  }
+
+  private changeLinks(): void {
+    this.changeActiveLink(ROUTES.Chat);
+    this.changeLoginLink();
+  }
+
+  private changeLoginLink(): void {
+    const isAuth = store.user.isAuth();
+    const login = this.links[2]?.getFirstChild();
+    if (login instanceof HTMLAnchorElement) {
+      if (isAuth) {
+        login.innerText = 'Logout';
+      } else {
+        login.innerText = 'Login';
+      }
+    }
   }
 
   public changeActiveLink(title: string): void {
