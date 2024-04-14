@@ -17,7 +17,9 @@ export default class AppRouter extends Router {
         name,
         component: async (): Promise<BaseComponent> => {
           const { default: createPage } = await module;
-          return createPage();
+          return createPage((route: string, isAuth: boolean) => {
+            this.push(route, isAuth);
+          });
         },
       })),
 
@@ -54,7 +56,7 @@ export default class AppRouter extends Router {
 
   public logout(): void {
     console.log('logout');
-    this.push('login', store.user.hasUser());
+    this.push('login', store.user.isAuth());
   }
 
   public getActiveRoute(): string {
