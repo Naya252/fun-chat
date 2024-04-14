@@ -3,7 +3,7 @@ import { type UserType } from '@/types/types';
 export default class User {
   private user: UserType;
 
-  constructor(userData: UserType = { name: '', surname: '' }) {
+  constructor(userData: UserType = { login: '', password: '', isLogined: false }) {
     this.user = userData;
   }
 
@@ -11,11 +11,19 @@ export default class User {
     return this.user;
   }
 
-  public hasUser(): boolean {
-    return this.user.name !== '' && this.user.surname !== '';
+  public isAuth(): boolean {
+    return this.user.isLogined;
   }
 
-  public setUser(userData: UserType): void {
-    this.user = { ...userData };
+  public setLogin(login: string): void {
+    this.user.login = login;
+  }
+
+  public setPassword(password: string): void {
+    this.user.password = password;
+  }
+
+  public setAuth(isLogined: boolean): void {
+    this.user.isLogined = isLogined;
   }
 }
