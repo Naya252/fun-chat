@@ -2,6 +2,10 @@ import BaseComponent from '@/components/shared/base-component';
 import BaseInput from '@/components/shared/base-input/base-input';
 import BaseButton from '@/components/shared/base-button/base-button';
 import isValid from '@/utils/form-validation';
+import * as repository from '@/repositories/front-requests';
+import store from '@/store/store';
+import { ROUTES } from '@/router/pathes';
+import emitter from '@/utils/event-emitter';
 
 const createTitle = (): BaseComponent => {
   const title = new BaseComponent(
@@ -64,10 +68,11 @@ class LoginPage extends BaseComponent {
   private password: BaseInput;
   private submitBtn: BaseButton;
   public isSubmit = false;
+  private onChangeRoute: (route: string, isAuth: boolean) => void;
 
-  constructor() {
+  constructor(routerPush: (route: string, isAuth: boolean) => void) {
     super('div', ['mx-auto', 'container', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
-
+    this.onChangeRoute = routerPush;
     const title = createTitle();
 
     this.loginForm = new BaseComponent<HTMLFormElement>(
@@ -99,8 +104,30 @@ class LoginPage extends BaseComponent {
 
   public submitLoginForm(e: Event): void {
     if (this.validateForm(e)) {
-      this.submitBtn.setClasses(['disabled']);
+      const btn = this.submitBtn.getElement();
+      btn.setAttribute('disabled', '');
+
+      const login = this.login.getValue();
+      const password = this.password.getValue();
+      emitter.on('login', () => this.goToChat());
+      emitter.on('loginError', () => this.removeDisabled());
+
+      repository.loginUser(login, password);
+      store.user.setLogin(login);
+      store.user.setPassword(password);
     }
+  }
+
+  private removeDisabled(): void {
+    const btn = this.submitBtn.getElement();
+    btn.removeAttribute('disabled');
+  }
+
+  public goToChat(): void {
+    this.removeDisabled();
+    const isAuth = store.user.isAuth();
+
+    this.onChangeRoute(ROUTES.Chat, isAuth);
   }
 
   private validateInput(): void {
@@ -129,8 +156,8 @@ class LoginPage extends BaseComponent {
   }
 }
 
-const createPage = (): BaseComponent => {
-  const page = new LoginPage();
+const createPage = (routerPush: (route: string, isAuth: boolean) => void): BaseComponent => {
+  const page = new LoginPage(routerPush);
   return page;
 };
 
