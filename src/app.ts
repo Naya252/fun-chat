@@ -2,6 +2,7 @@ import './styles/global.css';
 import BaseComponent from './components/shared/base-component';
 import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
+import alerts from './components/alert/alert';
 
 import AppRouter from './router/router';
 
@@ -31,7 +32,7 @@ export default class App {
     this.header = new Header(this.router);
     this.footer = new Footer();
 
-    this.appContainer.append(this.header, this.main, this.footer);
+    this.appContainer.append(this.header, this.main, this.footer, alerts);
   }
 
   public init(): void {
