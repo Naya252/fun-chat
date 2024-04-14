@@ -1,4 +1,5 @@
 export type UserType = {
-  name: string;
-  surname: string;
+  login: string;
+  password: string;
+  isLogined: boolean;
 };
