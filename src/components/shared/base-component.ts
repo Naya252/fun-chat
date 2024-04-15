@@ -55,7 +55,7 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
   }
 
   public setTextContent(text: string): void {
-    if (typeof text === 'string' && text !== '') {
+    if (typeof text === 'string') {
       this.element.textContent = text;
     }
   }
