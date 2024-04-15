@@ -1,4 +1,5 @@
 import type { Response, Error, Auth } from '@/types/api-types';
+import { type UserType } from '@/types/types';
 
 export const isResponse = (value: unknown): value is Response => {
   if (
@@ -36,6 +37,23 @@ export const isAuth = (value: unknown): value is Auth => {
     typeof value.user.isLogined === 'boolean' &&
     'login' in value.user &&
     typeof value.user.login === 'string'
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isUser = (value: unknown): value is UserType => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'login' in value &&
+    typeof value.login === 'string' &&
+    'password' in value &&
+    typeof value.password === 'string' &&
+    'isLogined' in value &&
+    typeof value.isLogined === 'boolean'
   ) {
     return true;
   }
