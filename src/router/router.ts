@@ -40,14 +40,16 @@ export default class AppRouter extends Router {
   public push(route = '', isAuth = false): void {
     let newRoute = route;
 
-    if (!isAuth) {
-      newRoute = 'login';
-    } else if (newRoute === '') {
+    if (newRoute === '') {
       newRoute = window.location.pathname.slice(1);
+    }
 
-      if (newRoute === '') {
-        newRoute = 'chat';
-      }
+    if (!isAuth && newRoute === ROUTES.Chat) {
+      newRoute = ROUTES.Login;
+    }
+
+    if (isAuth && newRoute === ROUTES.Login) {
+      newRoute = ROUTES.Chat;
     }
 
     super.navigateTo(newRoute);
@@ -55,8 +57,7 @@ export default class AppRouter extends Router {
   }
 
   public logout(): void {
-    console.log('logout');
-    this.push('login', store.user.isAuth());
+    this.push(ROUTES.Login, store.user.isAuth());
   }
 
   public getActiveRoute(): string {
