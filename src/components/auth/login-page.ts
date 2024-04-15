@@ -33,7 +33,7 @@ const createLogin = (): BaseInput => {
     autocomplete: 'off',
     required: 'true',
     value: '',
-    maxlength: '30',
+    maxlength: '12',
     minlength: '4',
     pattern: '^[A-Za-z0-9]*-?[A-Za-z0-9]* ?[A-Za-z0-9]*$',
   });
