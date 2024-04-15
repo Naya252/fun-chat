@@ -3,10 +3,14 @@ import type AppRouter from '@/router/router';
 import emitter from '@/utils/event-emitter';
 import { ROUTES } from '@/router/pathes';
 import store from '@/store/store';
+import * as repository from '@/repositories/front-requests';
+import logoutIcon from '@/assets/icons/logout';
+import logoIcon from '@/assets/icons/logo';
 
 const createTitle = (): BaseComponent => {
-  const title = new BaseComponent('h1', [], {}, 'Fun chat');
+  const title = new BaseComponent('h1', ['fun-chat', 'text-sky-400'], {}, 'Fun chat');
   const container = new BaseComponent('div', ['flex', 'flex-shrink-0', 'items-center']);
+  container.setHTML(logoIcon);
   container.append(title);
   return container;
 };
@@ -14,6 +18,8 @@ const createTitle = (): BaseComponent => {
 export default class Header extends BaseComponent {
   private router: AppRouter;
   private links: BaseComponent[];
+  private linksWrapper: BaseComponent;
+  private userLogin: BaseComponent;
 
   constructor(router: AppRouter) {
     super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'border-b', 'border-slate-700']);
@@ -22,13 +28,15 @@ export default class Header extends BaseComponent {
     const subcontainer = new BaseComponent('div', ['relative', 'flex', 'h-12', 'items-center', 'justify-between']);
 
     const title = createTitle();
+    this.userLogin = new BaseComponent('li', ['user-login']);
     this.links = this.createLinks();
-    const linksWrapper = this.createNav();
+    this.linksWrapper = this.createNav();
 
     container.append(subcontainer);
-    subcontainer.append(title, linksWrapper);
+    subcontainer.append(title, this.linksWrapper);
     this.append(container);
-    emitter.on('login', () => this.changeLinks());
+    emitter.on('login', () => this.changeLinks(ROUTES.Chat));
+    emitter.on('logout', () => this.goToLogin(ROUTES.Login));
   }
 
   private createNav(): BaseComponent {
@@ -39,11 +47,18 @@ export default class Header extends BaseComponent {
       'text-slate-700',
       'dark:text-slate-200',
     ]);
-    const ul = new BaseComponent('ul', ['flex', 'space-x-8']);
-    ul.append(...this.links);
+    const ul = new BaseComponent('ul', ['flex', 'space-x-4']);
+    ul.append(...this.links, this.userLogin);
     container.append(ul);
 
     return container;
+  }
+
+  private goToLogin(route: string): void {
+    this.changeActiveLink(route);
+    this.changeLoginLink();
+    const isAuth = store.user.isAuth();
+    this.router.push(route, isAuth);
   }
 
   private createLinks(): BaseComponent[] {
@@ -56,12 +71,25 @@ export default class Header extends BaseComponent {
         name,
       );
 
+      if (route === ROUTES.Chat) {
+        link.setClasses(['mr-4']);
+      }
+
       link.addListener('click', (event) => {
         event.preventDefault();
         const active = this.router.getActiveRoute();
 
         if (active !== route) {
-          this.router.push(route);
+          const isAuth = store.user.isAuth();
+
+          if (isAuth && route === ROUTES.Login) {
+            const user = store.user.getUser();
+
+            repository.logoutUser(user.login, user.password);
+            return;
+          }
+
+          this.router.push(route, isAuth);
           this.changeActiveLink(this.router.getActiveRoute());
         }
       });
@@ -73,24 +101,34 @@ export default class Header extends BaseComponent {
     return links;
   }
 
-  private changeLinks(): void {
-    this.changeActiveLink(ROUTES.Chat);
+  private changeLinks(route: string): void {
+    this.changeActiveLink(route);
     this.changeLoginLink();
   }
 
   private changeLoginLink(): void {
     const isAuth = store.user.isAuth();
     const login = this.links[2]?.getFirstChild();
-    if (login instanceof HTMLAnchorElement) {
+    const chat = this.links[1];
+
+    const userLogin = store.user.getLogin();
+    console.log(userLogin);
+
+    if (login instanceof HTMLAnchorElement && chat !== undefined) {
       if (isAuth) {
-        login.innerText = 'Logout';
+        login.innerHTML = logoutIcon;
+        chat.removeClasses(['hide']);
       } else {
         login.innerText = 'Login';
+        chat.setClasses(['hide']);
       }
+
+      this.userLogin.setTextContent(userLogin);
     }
   }
 
   public changeActiveLink(title: string): void {
+    this.changeLoginLink();
     this.links.forEach((el) => {
       const child = el.getFirstChild();
       const childTitle = child.textContent;

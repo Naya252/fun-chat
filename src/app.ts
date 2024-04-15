@@ -3,8 +3,10 @@ import BaseComponent from './components/shared/base-component';
 import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
 import alerts from './components/alert/alert';
+import { getUser } from './repositories/user-repository';
 
 import AppRouter from './router/router';
+import store from './store/store';
 
 export default class App {
   private readonly router: AppRouter;
@@ -41,7 +43,11 @@ export default class App {
     body.className = 'antialiased text-slate-500 dark:text-slate-400';
     this.appContainer.appendToParent(body);
 
-    this.router.push('');
+    const user = getUser();
+    store.user.setUser(user);
+
+    const isAuth = store.user.isAuth();
+    this.router.push('', isAuth);
     const activeRoute = this.router.getActiveRoute();
     this.header.changeActiveLink(activeRoute);
   }
