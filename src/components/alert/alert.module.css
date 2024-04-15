@@ -1,5 +1,4 @@
 .alerts {
-  composes: alerts from global;
   position: fixed;
   z-index: 99;
   top: 70px;
@@ -8,14 +7,12 @@
 }
 
 .alert {
-  composes: alert from global;
-  align-items: flex-start;
-  padding-right: 1rem;
-  font-weight: 600;
-  gap: 16px;
   display: flex;
   align-items: flex-start;
+  padding-right: 1rem;
   margin-bottom: 1rem;
+  font-weight: 600;
+  gap: 16px;
   opacity: 0;
   transition: all 0.3 ease;
 }
@@ -25,7 +22,6 @@
 }
 
 .alert-content {
-  composes: alert-content from global;
   flex-grow: 1;
   margin-bottom: 0;
 }
