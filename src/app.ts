@@ -1,9 +1,11 @@
 import './styles/global.css';
+import * as repository from '@/repositories/front-requests';
 import BaseComponent from './components/shared/base-component';
 import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
 import alerts from './components/alert/alert';
 import { getUser } from './repositories/user-repository';
+import emitter from './utils/event-emitter';
 
 import AppRouter from './router/router';
 import store from './store/store';
@@ -35,6 +37,9 @@ export default class App {
     this.footer = new Footer();
 
     this.appContainer.append(this.header, this.main, this.footer, alerts);
+
+    emitter.on('disconect-ws', () => this.disconnected());
+    emitter.on('connect-ws', () => this.connected());
   }
 
   public init(): void {
@@ -42,6 +47,14 @@ export default class App {
 
     body.className = 'antialiased text-slate-500 dark:text-slate-400';
     this.appContainer.appendToParent(body);
+  }
+
+  private disconnected(): void {
+    this.appContainer.setClasses(['show-connecting']);
+  }
+
+  private connected(): void {
+    this.appContainer.removeClasses(['show-connecting']);
 
     const user = getUser();
     store.user.setUser(user);
@@ -50,5 +63,9 @@ export default class App {
     this.router.push('', isAuth);
     const activeRoute = this.router.getActiveRoute();
     this.header.changeActiveLink(activeRoute);
+
+    if (isAuth) {
+      repository.loginUser(user.login, user.password);
+    }
   }
 }

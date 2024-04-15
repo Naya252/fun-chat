@@ -5,53 +5,6 @@ import { setUser } from '@/repositories/user-repository';
 import { isAuth, isError, isResponse } from '@/repositories/validation';
 import { USER_DICTIONARY, ERROR_TYPE } from '../types/api-types';
 
-// export const loginExternalUser = (login: string, isLogined: boolean): void => {
-//   ws.send(
-//     JSON.stringify({
-//       id: null,
-//       type: USER_DICTIONARY.externalLogin,
-//       payload: {
-//         user: {
-//           login,
-//           isLogined,
-//         },
-//       },
-//     }),
-//   );
-// };
-
-// export const logoutExternalUser = (login: string, isLogined: boolean): void => {
-//   ws.send(
-//     JSON.stringify({
-//       id: null,
-//       type: USER_DICTIONARY.externalLogout,
-//       payload: {
-//         user: {
-//           login,
-//           isLogined,
-//         },
-//       },
-//     }),
-//   );
-// };
-
-// export const deliverMessage = (isDelivered: boolean): void => {
-//   ws.send(
-//     JSON.stringify({
-//       id: 'string',
-//       type: MESSAGE_DICTIONARY.deliver,
-//       payload: {
-//         message: {
-//           id: 'string',
-//           status: {
-//             isDelivered,
-//           },
-//         },
-//       },
-//     }),
-//   );
-// };
-
 const changeAuth = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if (!isAuth(data)) {
     throw new Error('payload is not auth');
@@ -102,4 +55,13 @@ export const callMessages = (data: string): void => {
   if (typeof fn === 'function') {
     fn(payload);
   }
+};
+
+export const closedWs = (): void => {
+  emitter.emit('disconect-ws');
+};
+
+export const openedWs = (): void => {
+  console.log('WebSocket connected');
+  emitter.emit('connect-ws');
 };
