@@ -11,8 +11,16 @@ export default class User {
     return this.user;
   }
 
+  public setUser(user: UserType): void {
+    this.user = { ...user };
+  }
+
   public isAuth(): boolean {
     return this.user.isLogined;
+  }
+
+  public getLogin(): string {
+    return this.user.login;
   }
 
   public setLogin(login: string): void {
