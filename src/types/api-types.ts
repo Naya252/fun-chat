@@ -43,6 +43,11 @@ export type Error = {
   error: string;
 };
 
+export type Member = {
+  isLogined: boolean;
+  login: string;
+};
+
 export type Auth = {
-  user: { isLogined: boolean; login: string };
+  user: Member;
 };
