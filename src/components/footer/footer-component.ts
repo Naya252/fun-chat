@@ -3,7 +3,7 @@ import styles from '@/components/footer/footer.module.css';
 
 export default class Footer extends BaseComponent {
   constructor() {
-    super('footer', ['w-full', 'border-t', 'border-slate-700']);
+    super('footer', ['w-full']);
 
     const container = new BaseComponent('div', ['mx-auto', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
     const subcontainer = new BaseComponent('div', ['relative', 'flex', 'h-16', 'items-center', 'justify-between']);

@@ -22,7 +22,7 @@ export default class Header extends BaseComponent {
   private userLogin: BaseComponent;
 
   constructor(router: AppRouter) {
-    super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'border-b', 'border-slate-700']);
+    super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'shadow-md']);
     this.router = router;
     const container = new BaseComponent('div', ['mx-auto', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
     const subcontainer = new BaseComponent('div', ['relative', 'flex', 'h-12', 'items-center', 'justify-between']);
@@ -112,7 +112,6 @@ export default class Header extends BaseComponent {
     const chat = this.links[1];
 
     const userLogin = store.user.getLogin();
-    console.log(userLogin);
 
     if (login instanceof HTMLAnchorElement && chat !== undefined) {
       if (isAuth) {
