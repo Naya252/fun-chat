@@ -38,3 +38,37 @@
   z-index: 100;
   color: #ffffff85;
 }
+
+.members {
+  overflow-x: hidden;
+  height: calc(100dvh - 208px);
+}
+
+.member {
+  margin-left: 0 !important;
+  position: relative;
+  padding: 0.25rem 1rem 0.25rem 2rem;
+  border-radius: 4px;
+}
+
+.member button {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.member::before {
+  content: '';
+  position: absolute;
+  width: 0.5rem;
+  height: 0.5rem;
+  background: rgb(60, 75, 83);
+  border-radius: 50%;
+  top: calc(50% - 0.25rem);
+  left: 0.75rem;
+  z-index: 2;
+}
+
+.member.active::before {
+  background: #38bdf8;
+}

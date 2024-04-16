@@ -5,10 +5,16 @@ import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
 import alerts from './components/alert/alert';
 import { getUser } from './repositories/user-repository';
+import { getActiveUsers, getInactiveUsers } from './repositories/front-requests';
 import emitter from './utils/event-emitter';
 
 import AppRouter from './router/router';
 import store from './store/store';
+
+const getUsers = (): void => {
+  getActiveUsers();
+  getInactiveUsers();
+};
 
 export default class App {
   private readonly router: AppRouter;
@@ -40,6 +46,7 @@ export default class App {
 
     emitter.on('disconect-ws', () => this.disconnected());
     emitter.on('connect-ws', () => this.connected());
+    emitter.on('login', () => getUsers());
   }
 
   public init(): void {

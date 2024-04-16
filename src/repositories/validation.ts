@@ -1,4 +1,4 @@
-import type { Response, Error, Auth } from '@/types/api-types';
+import type { Response, Error, Auth, Member } from '@/types/api-types';
 import { type UserType } from '@/types/types';
 
 export const isResponse = (value: unknown): value is Response => {
@@ -6,7 +6,7 @@ export const isResponse = (value: unknown): value is Response => {
     value !== null &&
     typeof value === 'object' &&
     'id' in value &&
-    typeof value.id === 'string' &&
+    (typeof value.id === 'string' || value.id === null) &&
     'payload' in value &&
     typeof value.payload === 'object' &&
     'type' in value &&
@@ -38,6 +38,29 @@ export const isAuth = (value: unknown): value is Auth => {
     'login' in value.user &&
     typeof value.user.login === 'string'
   ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isMember = (value: unknown): value is Member => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'isLogined' in value &&
+    typeof value.isLogined === 'boolean' &&
+    'login' in value &&
+    typeof value.login === 'string'
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isUsers = (value: unknown): value is Member[] => {
+  if (value !== null && typeof value === 'object' && value instanceof Array && value.every((el) => isMember(el))) {
     return true;
   }
 
