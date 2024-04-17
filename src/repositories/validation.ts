@@ -1,4 +1,4 @@
-import type { Response, Error, Auth, Member } from '@/types/api-types';
+import type { Response, Error, Auth, Member, Message, StatusMsg } from '@/types/api-types';
 import { type UserType } from '@/types/types';
 
 export const isResponse = (value: unknown): value is Response => {
@@ -78,6 +78,55 @@ export const isUser = (value: unknown): value is UserType => {
     'isLogined' in value &&
     typeof value.isLogined === 'boolean'
   ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isStatusMsg = (value: unknown): value is StatusMsg => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'isDelivered' in value &&
+    typeof value.isDelivered === 'boolean' &&
+    'isReaded' in value &&
+    typeof value.isReaded === 'boolean' &&
+    'isEdited' in value &&
+    typeof value.isEdited === 'boolean'
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isMessage = (value: unknown): value is Message => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    'id' in value &&
+    typeof value.id === 'string' &&
+    'datetime' in value &&
+    typeof value.datetime === 'number' &&
+    'from' in value &&
+    typeof value.from === 'string' &&
+    'to' in value &&
+    typeof value.to === 'string' &&
+    'text' in value &&
+    typeof value.text === 'string' &&
+    'status' in value &&
+    typeof value.status === 'object' &&
+    isStatusMsg(value.status)
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
+export const isMessages = (value: unknown): value is Message[] => {
+  if (value !== null && value instanceof Array && value.every((el) => isMessage(el))) {
     return true;
   }
 
