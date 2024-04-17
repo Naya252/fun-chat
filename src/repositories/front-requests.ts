@@ -72,10 +72,8 @@ export const getHistory = (login: string): void => {
       id: 'string',
       type: MESSAGE_DICTIONARY.fromUser,
       payload: {
-        message: {
-          user: {
-            login,
-          },
+        user: {
+          login,
         },
       },
     }),
