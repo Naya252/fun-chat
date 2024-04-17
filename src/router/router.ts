@@ -44,6 +44,10 @@ export default class AppRouter extends Router {
       newRoute = window.location.pathname.slice(1);
     }
 
+    if (newRoute === '') {
+      newRoute = ROUTES.Chat;
+    }
+
     if (!isAuth && newRoute === ROUTES.Chat) {
       newRoute = ROUTES.Login;
     }
