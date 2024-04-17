@@ -2,8 +2,8 @@ import alerts from '@/components/alert/alert';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 import { setUser } from '@/repositories/user-repository';
-import { isAuth, isError, isResponse, isUsers, isMember } from '@/repositories/validation';
-import { USER_DICTIONARY, ERROR_TYPE } from '../types/api-types';
+import { isAuth, isError, isResponse, isUsers, isMember, isMessages, isMessage } from '@/repositories/validation';
+import { USER_DICTIONARY, ERROR_TYPE, MESSAGE_DICTIONARY } from '../types/api-types';
 
 const changeAuth = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if (!isAuth(data)) {
@@ -26,16 +26,16 @@ const changeAuth = (data: Record<string, string> | Record<string, Record<string,
   }
 };
 
-export const changeUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+const changeUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if (!isMember(data.user)) {
     throw new Error('payload is not member');
   }
 
   store.users.setUsers(data.user);
-  emitter.emit('change-users');
+  emitter.emit('change-users', data.user);
 };
 
-export const changeActiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+const changeActiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if ('users' in data && data.users.length === 0) {
     store.users.setActiveUsers([]);
     emitter.emit('get-active-users');
@@ -49,7 +49,7 @@ export const changeActiveUsers = (data: Record<string, string> | Record<string, 
   emitter.emit('get-active-users');
 };
 
-export const changeInactiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+const changeInactiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if ('users' in data && data.users.length === 0) {
     store.users.setInactiveUsers([]);
     emitter.emit('get-inactive-users');
@@ -64,7 +64,26 @@ export const changeInactiveUsers = (data: Record<string, string> | Record<string
   emitter.emit('get-inactive-users');
 };
 
-export const changeError = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+const getHistory = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+  const { messages } = data;
+  if (!isMessages(messages)) {
+    throw new Error('payload is not messages');
+  }
+
+  emitter.emit('get-histiry', messages);
+};
+
+const getMessage = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+  const { message } = data;
+
+  if (!isMessage(message)) {
+    throw new Error('payload is not message');
+  }
+
+  emitter.emit('get-message', message);
+};
+
+const changeError = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if (!isError(data)) {
     throw new Error('payload is not error');
   }
@@ -91,6 +110,12 @@ export const callMessages = (data: string): void => {
     [USER_DICTIONARY.inactive]: changeInactiveUsers,
     [USER_DICTIONARY.externalLogin]: changeUsers,
     [USER_DICTIONARY.externalLogout]: changeUsers,
+    [MESSAGE_DICTIONARY.send]: getMessage,
+    [MESSAGE_DICTIONARY.fromUser]: getHistory,
+    [MESSAGE_DICTIONARY.deliver]: null,
+    [MESSAGE_DICTIONARY.read]: null,
+    [MESSAGE_DICTIONARY.delete]: null,
+    [MESSAGE_DICTIONARY.edit]: null,
   };
 
   const fn = dictionary[type];
