@@ -60,7 +60,7 @@ const createInput = (inputId: string, inputType: InputType, attr: Record<string,
       'shadow-sm',
       'ring-1',
       'ring-gray-500',
-      'placeholder:text-slate-200',
+      'placeholder:text-slate-500',
       'focus:outline-none',
       'focus:ring-inset',
       'focus:ring-2',
@@ -92,8 +92,9 @@ export default class BaseInput extends BaseComponent {
     attr: Record<string, string>,
     inputType: InputType = 'text',
     classes: string[] = [],
+    mainClasses: string[] = [],
   ) {
-    super('div', ['input-wrapper']);
+    super('div', ['input-wrapper', ...mainClasses]);
 
     const label = createLabel(inputId, labelText);
     this.input = createInput(inputId, inputType, attr);
