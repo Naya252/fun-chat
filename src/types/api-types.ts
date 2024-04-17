@@ -51,3 +51,18 @@ export type Member = {
 export type Auth = {
   user: Member;
 };
+
+export type StatusMsg = {
+  isDelivered: boolean;
+  isReaded: boolean;
+  isEdited: boolean;
+};
+
+export type Message = {
+  id: string;
+  datetime: number;
+  from: string;
+  to: string;
+  text: string;
+  status: StatusMsg;
+};
