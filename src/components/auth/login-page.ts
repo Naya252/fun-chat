@@ -10,16 +10,7 @@ import emitter from '@/utils/event-emitter';
 const createTitle = (): BaseComponent => {
   const title = new BaseComponent(
     'h2',
-    [
-      'mt-10',
-      'text-center',
-      'text-2xl',
-      'font-bold',
-      'leading-9',
-      'tracking-tight',
-      'text-gray-900',
-      'dark:text-gray-300',
-    ],
+    ['mt-10', 'text-center', 'text-2xl', 'font-bold', 'leading-9', 'tracking-tight', 'text-gray-300'],
     {},
     'Sign in to Fun chat',
   );

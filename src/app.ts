@@ -52,7 +52,7 @@ export default class App {
   public init(): void {
     const { body } = document;
 
-    body.className = 'antialiased text-slate-500 dark:text-slate-400';
+    body.className = 'antialiased text-slate-400';
     this.appContainer.appendToParent(body);
   }
 

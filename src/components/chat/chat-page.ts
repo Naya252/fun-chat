@@ -41,7 +41,7 @@ const createUsers = (usrs: Member[]): BaseComponent[] => {
     const user = new BaseComponent<HTMLUListElement>('li', ['member']);
     const link = new BaseComponent<HTMLAnchorElement>(
       'button',
-      ['hover:text-sky-500', 'dark:hover:text-sky-400', 'w-full', 'flex', 'justify-items-start'],
+      ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start'],
       { id: el.login },
       el.login,
     );

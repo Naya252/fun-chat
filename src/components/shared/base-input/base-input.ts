@@ -27,7 +27,7 @@ type InputType =
 const createLabel = (inputId: string, labelText: string): BaseComponent => {
   const label = new BaseComponent<HTMLLabelElement>(
     'label',
-    ['block', 'text-sm', 'font-medium', 'leading-6', 'text-gray-900', 'dark:text-gray-400'],
+    ['block', 'text-sm', 'font-medium', 'leading-6', 'text-gray-400'],
     { for: inputId } as Record<string, string>,
     labelText,
   );
@@ -38,16 +38,7 @@ const createLabel = (inputId: string, labelText: string): BaseComponent => {
 const createText = (textId: string, subtext: string): BaseComponent => {
   const text = new BaseComponent(
     'div',
-    [
-      'form-text',
-      'text-gray-900',
-      'dark:text-gray-300',
-      'text-xs',
-      'text-rose-950',
-      'dark:text-rose-300',
-      'min-h-4',
-      'mt-1',
-    ],
+    ['form-text', 'text-gray-300', 'text-xs', 'text-rose-300', 'min-h-4', 'mt-1'],
     { id: textId },
     subtext,
   );
@@ -65,13 +56,11 @@ const createInput = (inputId: string, inputType: InputType, attr: Record<string,
       'border-0',
       'py-1.5',
       'px-3',
-      'text-slate-700',
-      'dark:text-slate-200',
+      'text-slate-200',
       'shadow-sm',
       'ring-1',
       'ring-gray-500',
-      'placeholder:text-slate-700',
-      'dark:placeholder:text-slate-200',
+      'placeholder:text-slate-200',
       'focus:outline-none',
       'focus:ring-inset',
       'focus:ring-2',

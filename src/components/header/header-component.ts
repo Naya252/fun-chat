@@ -40,13 +40,7 @@ export default class Header extends BaseComponent {
   }
 
   private createNav(): BaseComponent {
-    const container = new BaseComponent('nav', [
-      'text-sm',
-      'leading-6',
-      'font-semibold',
-      'text-slate-700',
-      'dark:text-slate-200',
-    ]);
+    const container = new BaseComponent('nav', ['text-sm', 'leading-6', 'font-semibold', 'text-slate-200']);
     const ul = new BaseComponent('ul', ['flex', 'space-x-4']);
     ul.append(...this.links, this.userLogin);
     container.append(ul);
@@ -66,7 +60,7 @@ export default class Header extends BaseComponent {
       const linkWrapper = new BaseComponent<HTMLUListElement>('li');
       const link = new BaseComponent<HTMLAnchorElement>(
         'a',
-        ['nav-link', 'hover:text-sky-500', 'dark:hover:text-sky-400'],
+        ['nav-link', 'hover:text-sky-400'],
         { id: route, href: route },
         name,
       );
@@ -132,12 +126,10 @@ export default class Header extends BaseComponent {
       const child = el.getFirstChild();
       const childTitle = child.textContent;
       if (child instanceof HTMLElement) {
-        child.classList.remove('text-sky-500');
-        child.classList.remove('dark:text-sky-400');
+        child.classList.remove('text-sky-400');
 
         if (childTitle?.toLowerCase() === title) {
-          child.classList.add('text-sky-500');
-          child.classList.add('dark:text-sky-400');
+          child.classList.add('text-sky-400');
         }
       }
     });
