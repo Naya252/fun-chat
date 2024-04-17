@@ -2,10 +2,30 @@ import BaseComponent from '@/components/shared/base-component';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 import { type Member } from '@/types/api-types';
+import BaseInput from '@/components/shared/base-input/base-input';
+
+const createSearchFiled = (): BaseInput => {
+  const search = new BaseInput(
+    'search',
+    '',
+    'text',
+    '',
+    {
+      value: '',
+      autocomplete: 'off',
+      placeholder: 'Search',
+    },
+    'text',
+    ['bg-gray-800', 'ring-gray-800', 'inner-box-shadow'],
+  );
+
+  return search;
+};
 
 const createSide = (): BaseComponent => {
   const sideCard = new BaseComponent('div', [
     'flex',
+    'flex-col',
     'w-full',
     'mr-6',
     'my-6',
@@ -59,6 +79,7 @@ class ChatPage extends BaseComponent {
   private users: BaseComponent[];
   private userWrapper: BaseComponent;
   private chat: BaseComponent;
+  private searchField: BaseInput;
 
   constructor() {
     super('div', ['mx-auto', 'container', 'flex', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
@@ -68,13 +89,17 @@ class ChatPage extends BaseComponent {
     this.userWrapper = createUsersWrapper();
     this.users = createUsers([]);
     this.userWrapper.append(...this.users);
-    this.side.append(this.userWrapper);
+    this.searchField = createSearchFiled();
+    this.searchField.inputListener('input', (e) => {
+      console.log(e);
+      this.search();
+    });
+    this.side.append(this.searchField, this.userWrapper);
     sideWrapper.append(this.side);
 
     this.chat = new BaseComponent('div', ['flex', 'w-2/3']);
     const chatCard = new BaseComponent('div', [
       'flex',
-
       'w-full',
       'ml-6',
       'my-6',
@@ -86,7 +111,7 @@ class ChatPage extends BaseComponent {
     ]);
     const chatTitle = new BaseComponent(
       'h2',
-      ['text-base', 'font-semibold', 'leading-6', 'text-gray-200', 'id="slide-over-title'],
+      ['text-base', 'font-semibold', 'leading-6', 'text-gray-200'],
       {},
       'Users',
     );
@@ -94,18 +119,28 @@ class ChatPage extends BaseComponent {
     this.chat.append(chatCard);
 
     this.append(sideWrapper, this.chat);
-    emitter.on('get-active-users', () => this.changeUsers());
-    emitter.on('get-inactive-users', () => this.changeUsers());
-    emitter.on('change-users', () => this.changeUsers());
-    this.changeUsers();
+    emitter.on('get-active-users', () => this.changeUsers(this.getMembers()));
+    emitter.on('get-inactive-users', () => this.changeUsers(this.getMembers()));
+    emitter.on('change-users', () => this.changeUsers(this.getMembers()));
+    this.changeUsers(this.getMembers());
   }
 
-  private changeUsers(): void {
+  private getMembers(): Member[] {
     const users = store.users.getUsers();
     const currentUser = store.user.getLogin();
+    return users.filter((el) => el.login !== currentUser);
+  }
 
-    this.users = createUsers(users.filter((el) => el.login !== currentUser));
+  private changeUsers(users: Member[]): void {
+    this.users = createUsers(users);
     this.userWrapper.replaceChildren(...this.users);
+  }
+
+  private search(): void {
+    let users = this.getMembers();
+    const value = this.searchField.getValue();
+    users = users.filter((el) => el.login.toLowerCase().includes(value.toLowerCase()));
+    this.changeUsers(users);
   }
 }
 

@@ -41,7 +41,7 @@
 
 .members {
   overflow-x: hidden;
-  height: calc(100dvh - 208px);
+  height: calc(100dvh - 256px);
 }
 
 .member {
@@ -71,4 +71,10 @@
 
 .member.active::before {
   background: #38bdf8;
+}
+
+.inner-box-shadow {
+  box-shadow:
+    0 2px 3px 1px rgb(0 0 0 / 0.05),
+    0 2px 4px 2px rgb(0 0 0 / 0.05);
 }

@@ -91,14 +91,14 @@ export default class BaseInput extends BaseComponent {
     subtext: string,
     attr: Record<string, string>,
     inputType: InputType = 'text',
-    classes = '',
+    classes: string[] = [],
   ) {
     super('div', ['input-wrapper']);
 
     const label = createLabel(inputId, labelText);
     this.input = createInput(inputId, inputType, attr);
     if (classes.length > 0) {
-      this.input.setClasses([classes]);
+      this.input.setClasses(classes);
     }
     const inputWrapper = new BaseComponent('div');
     this.text = createText(textId, subtext);
