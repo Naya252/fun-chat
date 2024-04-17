@@ -101,13 +101,11 @@ export default class Chat extends BaseComponent {
   private drawHistory(messages: unknown): void {
     if (isMessages(messages)) {
       this.changeMessages(messages);
-      console.log(messages);
 
       const elements: BaseComponent[] = [];
 
       this.messages.forEach((el) => {
         const msg = createMessage(el);
-        console.log(msg);
         elements.push(msg);
       });
 
@@ -118,7 +116,6 @@ export default class Chat extends BaseComponent {
   private changeHistory(message: unknown): void {
     if (isMessage(message)) {
       this.changeMessages([message]);
-      console.log(message);
 
       const msg = createMessage(message);
       this.messagesCard.append(msg);

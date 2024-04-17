@@ -1,6 +1,6 @@
 import BaseComponent from '@/components/shared/base-component';
 import BaseInput from '@/components/shared/base-input/base-input';
-import { type Member } from '@/types/api-types';
+import type { Member, Message } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 
@@ -33,7 +33,7 @@ export const createSide = (): BaseComponent => {
     'px-6',
     'py-6',
     'rounded-xl',
-    'bg-gray-900/[.08]',
+    'bg-white/[.04]',
     'shadow-md',
     'overflow-auto',
   ]);
@@ -92,4 +92,19 @@ export const selectMember = (e: Event): void => {
     const isActive = member.parentElement?.classList.contains('active');
     emitter.emit('select-member', { login, isLogined: isActive });
   }
+};
+
+export const createMessage = (msg: Message): BaseComponent => {
+  const message = new BaseComponent(
+    'div',
+    ['px-2', 'py-2', 'my-2', 'mx-6', 'bg-white/[.04]', 'rounded-md', 'w-3/5'],
+    {},
+    msg.text,
+  );
+
+  if (msg.from === store.user.getLogin()) {
+    message.setClasses(['ml-auto']);
+  }
+
+  return message;
 };
