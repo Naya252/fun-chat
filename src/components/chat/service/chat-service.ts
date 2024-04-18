@@ -69,7 +69,7 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     const user = new BaseComponent<HTMLUListElement>('li', ['member']);
     const link = new BaseComponent<HTMLAnchorElement>(
       'button',
-      ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start'],
+      ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start', 'truncate'],
       { id: el.login },
       el.login,
     );
@@ -146,7 +146,7 @@ export const selectMember = (e: Event): void => {
 export const createMessage = (msg: Message): BaseComponent => {
   const message = new BaseComponent(
     'div',
-    ['px-2', 'py-2', 'my-2', 'bg-white/[.04]', 'rounded-md', 'w-3/5'],
+    ['px-2', 'py-2', 'my-2', 'bg-white/[.04]', 'rounded-md', 'w-3/5', 'text-clip'],
     {},
     msg.text,
   );
