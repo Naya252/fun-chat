@@ -39,7 +39,9 @@ export default class Chat extends BaseComponent {
 
     this.messagesCard = new BaseComponent('div', ['overflow-auto', 'h-full']);
 
-    this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-field']);
+    this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-field'], {
+      disabled: '',
+    });
     this.textField.inputListener('change', () => {
       this.sendMessage();
     });
@@ -73,6 +75,7 @@ export default class Chat extends BaseComponent {
 
   private redrawMemberInfo(login: string, isLogined: boolean): void {
     this.member = login;
+    this.textField.setDisabled(false);
 
     this.memberLogin.setTextContent(login);
 
