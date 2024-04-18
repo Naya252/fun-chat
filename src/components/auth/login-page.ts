@@ -19,15 +19,23 @@ const createTitle = (): BaseComponent => {
 };
 
 const createLogin = (): BaseInput => {
-  const login = new BaseInput('login', 'Login', 'login-text', '', {
-    name: 'login',
-    autocomplete: 'off',
-    required: 'true',
-    value: '',
-    maxlength: '12',
-    minlength: '4',
-    pattern: '^[A-Za-z0-9]*-?[A-Za-z0-9]* ?[A-Za-z0-9]*$',
-  });
+  const login = new BaseInput(
+    'login',
+    'Login',
+    'login-text',
+    '',
+    {
+      name: 'login',
+      autocomplete: 'off',
+      required: 'true',
+      value: '',
+      maxlength: '12',
+      minlength: '4',
+      pattern: '^[A-Za-z0-9]*-?[A-Za-z0-9]* ?[A-Za-z0-9]*$',
+    },
+    'text',
+    ['focus:ring-sky-500'],
+  );
 
   return login;
 };
@@ -48,6 +56,7 @@ const createPassword = (): BaseInput => {
       pattern: '^[A-Za-z0-9]*-?[A-Za-z0-9]* ?[A-Za-z0-9]*$',
     },
     'password',
+    ['focus:ring-sky-500'],
   );
 
   return password;
@@ -76,7 +85,14 @@ class LoginPage extends BaseComponent {
 
     this.password = createPassword();
 
-    this.submitBtn = new BaseButton('submit', 'Login', []);
+    this.submitBtn = new BaseButton('submit', 'Login', [
+      'bg-sky-600',
+      'hover:bg-sky-500',
+      'focus-visible:outline-sky-600',
+      'disabled:bg-sky-600',
+      'disabled:hover:bg-sky-600',
+      'disabled:focus:bg-sky-600',
+    ]);
     this.submitBtn.addListener('click', (e) => {
       this.submitLoginForm(e);
     });
@@ -86,7 +102,7 @@ class LoginPage extends BaseComponent {
     this.validateInput();
 
     document.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter') {
+      if (event.key === 'Enter' && !store.user.isAuth()) {
         event.preventDefault();
         this.submitLoginForm(event);
       }

@@ -11,7 +11,6 @@ export default class BaseButton extends BaseComponent {
         'w-full',
         'justify-center',
         'rounded-md',
-        'bg-sky-600',
         'px-3',
         'py-1.5',
         'text-sm',
@@ -19,19 +18,23 @@ export default class BaseButton extends BaseComponent {
         'leading-6',
         'text-white',
         'shadow-sm',
-        'hover:bg-sky-500',
         'focus-visible:outline',
         'focus-visible:outline-2',
         'focus-visible:outline-offset-2',
-        'focus-visible:outline-sky-600',
         'disabled:opacity-75',
-        'disabled:bg-sky-600',
-        'disabled:hover:bg-sky-600',
-        'disabled:focus:bg-sky-600',
         ...className,
       ],
       { ...attrs, type } as Record<string, string>,
       text,
     );
+  }
+
+  public setDisabled(value: boolean): void {
+    const item = this.getElement();
+    if (!value) {
+      item.removeAttribute('disabled');
+    } else {
+      item.setAttribute('disabled', '');
+    }
   }
 }
