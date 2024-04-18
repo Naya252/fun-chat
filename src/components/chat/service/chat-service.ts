@@ -4,7 +4,12 @@ import type { Member, Message } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 
-export const createTextField = (placeholder: string, classes: string[] = [], mainClasses: string[] = []): BaseInput => {
+export const createTextField = (
+  placeholder: string,
+  classes: string[] = [],
+  mainClasses: string[] = [],
+  attrs: Record<string, string> = {},
+): BaseInput => {
   const search = new BaseInput(
     'Search',
     '',
@@ -14,6 +19,7 @@ export const createTextField = (placeholder: string, classes: string[] = [], mai
       value: '',
       autocomplete: 'off',
       placeholder,
+      ...attrs,
     },
     'text',
     ['bg-gray-800', 'ring-gray-800', 'inner-box-shadow', ...classes],

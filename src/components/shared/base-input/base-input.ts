@@ -140,4 +140,13 @@ export default class BaseInput extends BaseComponent {
   public changeSubText(): void {
     this.text.setHTML('');
   }
+
+  public setDisabled(value: boolean): void {
+    const item = this.input.getElement();
+    if (!value) {
+      item.removeAttribute('disabled');
+    } else {
+      item.setAttribute('disabled', '');
+    }
+  }
 }
