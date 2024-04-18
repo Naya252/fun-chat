@@ -1,5 +1,6 @@
 import BaseComponent from '@/components/shared/base-component';
 import BaseInput from '@/components/shared/base-input/base-input';
+import BaseButton from '@/components/shared/base-button/base-button';
 import type { Member, Message } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
@@ -79,6 +80,48 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     users.push(user);
   });
   return users;
+};
+
+export const createChat = (): BaseComponent => {
+  const chat = new BaseComponent('div', [
+    'flex',
+    'flex-col',
+    'w-full',
+    'ml-6',
+    'my-6',
+    'rounded-xl',
+    'bg-white/[.04]',
+    'shadow-md',
+  ]);
+
+  return chat;
+};
+
+export const createMessagesCard = (): BaseComponent => {
+  const card = new BaseComponent('div', ['overflow-auto', 'h-full', 'px-6', 'flex', 'flex-col', 'chat-field']);
+
+  return card;
+};
+
+export const createSendButton = (): BaseButton => {
+  const button = new BaseButton(
+    'button',
+    'Send',
+    [
+      'py-3',
+      'max-w-16',
+      'bg-gray-700',
+      'hover:bg-gray-600',
+      'focus-visible:outline-bg-gray-600',
+      'disabled:text-gray-600',
+      'disabled:bg-gray-700/[.02]',
+      'disabled:hover:bg-gray-700/[.02]',
+      'disabled:focus:bg-gray-700/[.02]',
+    ],
+    { disabled: '' },
+  );
+
+  return button;
 };
 
 export const getMembers = (): Member[] => {

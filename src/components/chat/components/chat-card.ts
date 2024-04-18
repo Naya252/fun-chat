@@ -1,14 +1,23 @@
 import BaseComponent from '@/components/shared/base-component';
+import type BaseButton from '@/components/shared/base-button/base-button';
 import type BaseInput from '@/components/shared/base-input/base-input';
 import * as repository from '@/repositories/front-requests';
+import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 import { isMember, isMessages, isMessage } from '@/repositories/validation';
 import { type Message } from '@/types/api-types';
-import { createTextField, createMessage } from '../service/chat-service';
+import {
+  createTextField,
+  createMessage,
+  createChat,
+  createMessagesCard,
+  createSendButton,
+} from '../service/chat-service';
 
 export default class Chat extends BaseComponent {
   private chat: BaseComponent;
   private textField: BaseInput;
+  private sendButton: BaseButton;
   private memberLogin: BaseComponent;
   private memberStatus: BaseComponent;
   private memberInfo: BaseComponent;
@@ -19,38 +28,41 @@ export default class Chat extends BaseComponent {
   constructor() {
     super('div', ['flex', 'w-2/3']);
 
-    this.chat = new BaseComponent('div', [
-      'flex',
-      'flex-col',
-      'w-full',
-      'ml-6',
-      'my-6',
-      'rounded-xl',
-      'bg-white/[.04]',
-      'shadow-md',
-    ]);
-    this.memberLogin = new BaseComponent('h2', ['font-semibold', 'text-gray-300']);
+    this.chat = createChat();
+    this.memberLogin = new BaseComponent(
+      'h2',
+      ['font-semibold', 'text-gray-300'],
+      {},
+      'Select a user to send a message...',
+    );
     this.memberStatus = new BaseComponent('p', ['font-semibold', 'text-gray-300']);
     this.memberInfo = new BaseComponent('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6']);
     this.memberInfo.append(this.memberLogin, this.memberStatus);
     this.member = '';
+
     this.messages = [];
-    this.messagesCard = new BaseComponent(
-      'div',
-      ['overflow-auto', 'h-full', 'px-6', 'flex', 'flex-col'],
-      {},
-      'Select a user to send a message...',
-    );
-    this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-field'], {
+    this.messagesCard = createMessagesCard();
+
+    this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-msg-field', 'w-full'], {
       disabled: '',
     });
-    this.textField.inputListener('change', () => {
-      this.sendMessage();
+    this.sendButton = createSendButton();
+    this.sendButton.addListener('click', () => this.sendMessage());
+    document.addEventListener('keypress', (event) => {
+      if (event.key === 'Enter' && store.user.isAuth()) {
+        event.preventDefault();
+        this.sendMessage();
+      }
     });
+    const chatActions = new BaseComponent('div', ['flex', 'max-h-12']);
+    chatActions.append(this.textField, this.sendButton);
 
-    this.chat.append(this.memberInfo, this.messagesCard, this.textField);
+    this.chat.append(this.memberInfo, this.messagesCard, chatActions);
     this.append(this.chat);
+    this.addEmitterListeners();
+  }
 
+  private addEmitterListeners(): void {
     emitter.on('select-member', (member) => this.drawMemberChat(member));
     emitter.on('get-histiry', (messages) => this.drawHistory(messages));
     emitter.on('get-message', (message) => this.changeHistory(message));
@@ -78,6 +90,7 @@ export default class Chat extends BaseComponent {
   private redrawMemberInfo(login: string, isLogined: boolean): void {
     this.member = login;
     this.textField.setDisabled(false);
+    this.sendButton.setDisabled(false);
 
     this.memberLogin.setTextContent(login);
 
