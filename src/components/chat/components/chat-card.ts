@@ -29,16 +29,18 @@ export default class Chat extends BaseComponent {
       'bg-white/[.04]',
       'shadow-md',
     ]);
-
     this.memberLogin = new BaseComponent('h2', ['font-semibold', 'text-gray-300']);
     this.memberStatus = new BaseComponent('p', ['font-semibold', 'text-gray-300']);
     this.memberInfo = new BaseComponent('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6']);
     this.memberInfo.append(this.memberLogin, this.memberStatus);
     this.member = '';
     this.messages = [];
-
-    this.messagesCard = new BaseComponent('div', ['overflow-auto', 'h-full']);
-
+    this.messagesCard = new BaseComponent(
+      'div',
+      ['overflow-auto', 'h-full', 'px-6'],
+      {},
+      'Select a user to send a message...',
+    );
     this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-field'], {
       disabled: '',
     });

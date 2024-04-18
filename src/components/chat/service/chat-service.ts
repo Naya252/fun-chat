@@ -103,7 +103,7 @@ export const selectMember = (e: Event): void => {
 export const createMessage = (msg: Message): BaseComponent => {
   const message = new BaseComponent(
     'div',
-    ['px-2', 'py-2', 'my-2', 'mx-6', 'bg-white/[.04]', 'rounded-md', 'w-3/5'],
+    ['px-2', 'py-2', 'my-2', 'bg-white/[.04]', 'rounded-md', 'w-3/5'],
     {},
     msg.text,
   );
