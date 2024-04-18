@@ -117,6 +117,8 @@ export default class Chat extends BaseComponent {
   }
 
   private drawHistory(messages: unknown): void {
+    this.messages = [];
+
     if (isMessages(messages)) {
       this.changeMessages(messages);
 
