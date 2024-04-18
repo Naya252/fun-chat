@@ -37,7 +37,7 @@ export default class Chat extends BaseComponent {
     this.messages = [];
     this.messagesCard = new BaseComponent(
       'div',
-      ['overflow-auto', 'h-full', 'px-6'],
+      ['overflow-auto', 'h-full', 'px-6', 'flex', 'flex-col'],
       {},
       'Select a user to send a message...',
     );
@@ -109,10 +109,15 @@ export default class Chat extends BaseComponent {
 
       const elements: BaseComponent[] = [];
 
-      this.messages.forEach((el) => {
-        const msg = createMessage(el);
-        elements.push(msg);
-      });
+      if (this.messages.length > 0) {
+        this.messages.forEach((el) => {
+          const msg = createMessage(el);
+          elements.push(msg);
+        });
+      } else {
+        const emptyText = new BaseComponent('div', ['my-auto', 'mx-auto'], {}, 'Write your first message...');
+        elements.push(emptyText);
+      }
 
       this.messagesCard.replaceChildren(...elements);
     }
@@ -123,7 +128,11 @@ export default class Chat extends BaseComponent {
       this.changeMessages([message]);
 
       const msg = createMessage(message);
-      this.messagesCard.append(msg);
+      if (this.messages.length === 1) {
+        this.messagesCard.replaceChildren(msg);
+      } else {
+        this.messagesCard.append(msg);
+      }
     }
   }
 }
