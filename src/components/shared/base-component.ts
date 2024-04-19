@@ -111,6 +111,15 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
     return child;
   }
 
+  public getLastChild(): ChildNode {
+    const el = this.getElement();
+    const child = el.lastChild;
+    if (child === null) {
+      throw new Error('Without child');
+    }
+    return child;
+  }
+
   public getParent(): ParentNode {
     const el = this.getElement();
     const parent = el.parentNode;
