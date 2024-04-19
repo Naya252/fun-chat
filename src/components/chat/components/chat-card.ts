@@ -13,6 +13,7 @@ import {
   createMessagesCard,
   createSendButton,
 } from '../service/chat-service';
+import { scrollTo } from '../service/helper';
 
 export default class Chat extends BaseComponent {
   private chat: BaseComponent;
@@ -24,6 +25,7 @@ export default class Chat extends BaseComponent {
   private messagesCard: BaseComponent;
   private member: string;
   private messages: Message[];
+  private divider: BaseComponent | null;
 
   constructor() {
     super('div', ['flex', 'w-2/3']);
@@ -60,12 +62,21 @@ export default class Chat extends BaseComponent {
     this.chat.append(this.memberInfo, this.messagesCard, chatActions);
     this.append(this.chat);
     this.addEmitterListeners();
+
+    this.divider = null;
   }
 
   private addEmitterListeners(): void {
     emitter.on('select-member', (member) => this.drawMemberChat(member));
     emitter.on('get-message', (message) => this.changeHistory(message));
     emitter.on('change-users', (member) => this.checkMember(member));
+    emitter.on('add-divider', (element) => this.addDivider(element));
+  }
+
+  private addDivider(element: unknown): void {
+    if (element instanceof BaseComponent) {
+      this.divider = element;
+    }
   }
 
   private checkMember(member: unknown): void {
@@ -78,6 +89,8 @@ export default class Chat extends BaseComponent {
   }
 
   private drawMemberChat(member: unknown): void {
+    this.divider = null;
+
     if (isMember(member)) {
       const { login, isLogined } = member;
 
@@ -140,6 +153,7 @@ export default class Chat extends BaseComponent {
       }
 
       this.messagesCard.replaceChildren(...elements);
+      scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
     }
   }
 
@@ -162,6 +176,8 @@ export default class Chat extends BaseComponent {
         } else {
           this.messagesCard.append(msg);
         }
+
+        scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
       }
     }
   }
