@@ -37,22 +37,19 @@ const changeUsers = (data: Record<string, string> | Record<string, Record<string
 
 const changeActiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if ('users' in data && data.users.length === 0) {
-    store.users.setActiveUsers([]);
-    emitter.emit('get-active-users');
+    store.users.setActiveUsers([], store.user.getLogin());
   }
 
   if (!isUsers(data.users)) {
     throw new Error('payload is not users');
   }
 
-  store.users.setActiveUsers(data.users);
-  emitter.emit('get-active-users');
+  store.users.setActiveUsers(data.users, store.user.getLogin());
 };
 
 const changeInactiveUsers = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if ('users' in data && data.users.length === 0) {
-    store.users.setInactiveUsers([]);
-    emitter.emit('get-inactive-users');
+    store.users.setInactiveUsers([], store.user.getLogin());
     return;
   }
 
@@ -60,8 +57,7 @@ const changeInactiveUsers = (data: Record<string, string> | Record<string, Recor
     throw new Error('payload is not users');
   }
 
-  store.users.setInactiveUsers(data.users);
-  emitter.emit('get-inactive-users');
+  store.users.setInactiveUsers(data.users, store.user.getLogin());
 };
 
 const getHistory = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
@@ -69,8 +65,7 @@ const getHistory = (data: Record<string, string> | Record<string, Record<string,
   if (!isMessages(messages)) {
     throw new Error('payload is not messages');
   }
-
-  emitter.emit('get-histiry', messages);
+  store.users.changeHistory(messages);
 };
 
 const getMessage = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
@@ -80,7 +75,7 @@ const getMessage = (data: Record<string, string> | Record<string, Record<string,
     throw new Error('payload is not message');
   }
 
-  emitter.emit('get-message', message);
+  store.users.setMessages(message);
 };
 
 const changeError = (data: Record<string, string> | Record<string, Record<string, string>>): void => {

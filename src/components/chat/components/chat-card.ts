@@ -64,7 +64,6 @@ export default class Chat extends BaseComponent {
 
   private addEmitterListeners(): void {
     emitter.on('select-member', (member) => this.drawMemberChat(member));
-    emitter.on('get-histiry', (messages) => this.drawHistory(messages));
     emitter.on('get-message', (message) => this.changeHistory(message));
     emitter.on('change-users', (member) => this.checkMember(member));
   }
@@ -82,7 +81,11 @@ export default class Chat extends BaseComponent {
     if (isMember(member)) {
       const { login, isLogined } = member;
 
-      repository.getHistory(login);
+      const data = store.users.getChatData(login);
+      if (data !== undefined) {
+        this.drawHistory(data.messages);
+      }
+
       this.redrawMemberInfo(login, isLogined);
     }
   }
@@ -140,13 +143,20 @@ export default class Chat extends BaseComponent {
 
   private changeHistory(message: unknown): void {
     if (isMessage(message)) {
-      this.changeMessages([message]);
+      const data = store.users.getChatData(this.member);
 
-      const msg = createMessage(message);
-      if (this.messages.length === 1) {
-        this.messagesCard.replaceChildren(msg);
-      } else {
-        this.messagesCard.append(msg);
+      if (
+        (data !== undefined && data.messages && data.messages?.length > this.messages.length) ||
+        this.messages.length === 1
+      ) {
+        this.changeMessages([message]);
+
+        const msg = createMessage(message);
+        if (this.messages.length === 1) {
+          this.messagesCard.replaceChildren(msg);
+        } else {
+          this.messagesCard.append(msg);
+        }
       }
     }
   }

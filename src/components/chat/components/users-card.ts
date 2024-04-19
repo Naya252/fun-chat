@@ -34,8 +34,6 @@ export default class Users extends BaseComponent {
     this.side.append(this.searchField, this.userWrapper);
     this.append(this.side);
 
-    emitter.on('get-active-users', () => this.changeUsers(getMembers()));
-    emitter.on('get-inactive-users', () => this.changeUsers(getMembers()));
     emitter.on('change-users', () => this.changeUsers(getMembers()));
     this.changeUsers(getMembers());
   }
