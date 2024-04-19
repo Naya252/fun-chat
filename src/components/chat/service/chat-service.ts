@@ -4,6 +4,7 @@ import BaseButton from '@/components/shared/base-button/base-button';
 import type { Member, Message } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
+import { formatDate } from './helper';
 
 export const createTextField = (
   placeholder: string,
@@ -108,7 +109,7 @@ export const createChat = (): BaseComponent => {
 };
 
 export const createMessagesCard = (): BaseComponent => {
-  const card = new BaseComponent('div', ['overflow-auto', 'h-full', 'px-6', 'pb-2', 'flex', 'flex-col', 'chat-field']);
+  const card = new BaseComponent('div', ['overflow-auto', 'h-full', 'px-6', 'py-2', 'flex', 'flex-col', 'chat-field']);
 
   return card;
 };
@@ -153,26 +154,6 @@ export const selectMember = (e: Event): void => {
   }
 };
 
-const formatDate = (datetime: number): string => {
-  const currentDate = new Date(datetime);
-
-  const formattedDate = currentDate.toLocaleDateString('ru-RU', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-  });
-
-  const formattedTime = currentDate.toLocaleTimeString('ru-RU', {
-    hour: '2-digit',
-    minute: '2-digit',
-    second: '2-digit',
-  });
-
-  const formattedDateTime = `${formattedDate}, ${formattedTime}`;
-
-  return formattedDateTime;
-};
-
 export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
   const wrapper = new BaseComponent('div', ['my-3'], {});
   const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
@@ -180,6 +161,7 @@ export const createMessage = (msg: Message, firstNewMessage: string): BaseCompon
 
   if (msg.id === firstNewMessage) {
     wrapper.setClasses(['divider']);
+    emitter.emit('add-divider', wrapper);
   }
   const header = new BaseComponent('div', ['flex', 'justify-between', 'gap-2', 'text-xs']);
   const author = new BaseComponent('div', [], {}, msg.from === store.user.getLogin() ? 'you' : msg.from);
