@@ -43,15 +43,6 @@ export type Error = {
   error: string;
 };
 
-export type Member = {
-  isLogined: boolean;
-  login: string;
-};
-
-export type Auth = {
-  user: Member;
-};
-
 export type StatusMsg = {
   isDelivered: boolean;
   isReaded: boolean;
@@ -65,4 +56,15 @@ export type Message = {
   to: string;
   text: string;
   status: StatusMsg;
+};
+
+export type Member = {
+  isLogined: boolean;
+  login: string;
+  messages?: Message[];
+  newMessages?: Message[];
+};
+
+export type Auth = {
+  user: Member;
 };
