@@ -66,7 +66,7 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     return users;
   }
   usrs.forEach((el) => {
-    const user = new BaseComponent<HTMLUListElement>('li', ['member']);
+    const user = new BaseComponent<HTMLUListElement>('li', ['member', 'flex']);
     const link = new BaseComponent<HTMLAnchorElement>(
       'button',
       ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start', 'truncate'],
@@ -74,9 +74,19 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
       el.login,
     );
     if (el.isLogined) {
-      user.setClasses(['active']);
+      user.setClasses(['active', 'flex']);
     }
+
     user.append(link);
+    if (el.newMessages !== undefined && el.newMessages?.length > 0) {
+      const counter = new BaseComponent<HTMLUListElement>(
+        'div',
+        ['counter', 'bg-sky-700', 'px-3', 'py-1', 'rounded-full', 'text-white', 'font-semibold', 'text-xs'],
+        {},
+        el.newMessages?.length.toString(),
+      );
+      user.append(link, counter);
+    }
     users.push(user);
   });
   return users;
@@ -98,7 +108,7 @@ export const createChat = (): BaseComponent => {
 };
 
 export const createMessagesCard = (): BaseComponent => {
-  const card = new BaseComponent('div', ['overflow-auto', 'h-full', 'px-6', 'flex', 'flex-col', 'chat-field']);
+  const card = new BaseComponent('div', ['overflow-auto', 'h-full', 'px-6', 'pb-2', 'flex', 'flex-col', 'chat-field']);
 
   return card;
 };
@@ -143,17 +153,57 @@ export const selectMember = (e: Event): void => {
   }
 };
 
+const formatDate = (datetime: number): string => {
+  const currentDate = new Date(datetime);
+
+  const formattedDate = currentDate.toLocaleDateString('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+  });
+
+  const formattedTime = currentDate.toLocaleTimeString('ru-RU', {
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+  });
+
+  const formattedDateTime = `${formattedDate}, ${formattedTime}`;
+
+  return formattedDateTime;
+};
+
 export const createMessage = (msg: Message): BaseComponent => {
   const message = new BaseComponent(
     'div',
-    ['px-2', 'py-2', 'my-2', 'bg-white/[.04]', 'rounded-md', 'w-3/5', 'text-clip'],
+    ['px-3', 'py-2', 'my-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'],
     {},
-    msg.text,
   );
 
+  const header = new BaseComponent('div', ['flex', 'justify-between', 'gap-2', 'text-xs']);
+  const author = new BaseComponent('div', [], {}, msg.from === store.user.getLogin() ? 'you' : msg.from);
+  const msgDate = formatDate(msg.datetime);
+  const date = new BaseComponent('div', [], {}, msgDate.toString());
+  header.append(author, date);
+
+  const content = new BaseComponent('div', ['text-clip', 'text-gray-300'], {}, msg.text);
+
+  const footer = new BaseComponent('div', ['text-xs', 'flex', 'justify-between', 'gap-2']);
+
   if (msg.from === store.user.getLogin()) {
-    message.setClasses(['ml-auto']);
+    message.setClasses(['ml-auto', 'bg-gray-700']);
+    const deliveredStatus = msg.status.isDelivered ? 'delivered' : '';
+    const readedStatus = msg.status.isReaded ? 'readed' : '';
+    const editedStatus = msg.status.isEdited ? 'edited' : '';
+
+    const status = new BaseComponent('p', [], {}, readedStatus || deliveredStatus);
+    const edited = new BaseComponent('p', [], {}, editedStatus);
+
+    footer.append(edited, status);
+  } else {
+    message.setClasses(['mr-auto', 'bg-gray-800']);
   }
 
+  message.append(header, content, footer);
   return message;
 };
