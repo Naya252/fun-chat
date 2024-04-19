@@ -18,6 +18,8 @@ export const formatDate = (datetime: number): string => {
   return formattedDateTime;
 };
 
-export const scrollTo = (element: HTMLElement): void => {
-  element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+export const scrollTo = (element: HTMLElement | ChildNode): void => {
+  if (element instanceof HTMLElement) {
+    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+  }
 };
