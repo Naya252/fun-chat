@@ -25,7 +25,9 @@ export default class Users {
   }
 
   public setActiveUsers(activeUsers: Member[], currentUser: string): void {
-    this.activeUsers = [...activeUsers.map((user) => ({ ...user, messages: [], newMessages: [] }))];
+    this.activeUsers = [
+      ...activeUsers.map((user) => ({ ...user, messages: [], newMessages: [], firstNewMessage: '' })),
+    ];
     this.isGetActive = true;
     this.setCurrentUser(currentUser);
     this.checkUsers();
@@ -36,7 +38,9 @@ export default class Users {
   }
 
   public setInactiveUsers(inactiveUsers: Member[], currentUser: string): void {
-    this.inactiveUsers = [...inactiveUsers.map((user) => ({ ...user, messages: [], newMessages: [] }))];
+    this.inactiveUsers = [
+      ...inactiveUsers.map((user) => ({ ...user, messages: [], newMessages: [], firstNewMessage: '' })),
+    ];
     this.isGetInactive = true;
     this.setCurrentUser(currentUser);
     this.checkUsers();
@@ -58,7 +62,7 @@ export default class Users {
     if (item !== undefined) {
       item.isLogined = user.isLogined;
     } else {
-      this.activeUsers.push({ ...user, messages: [], newMessages: [] });
+      this.activeUsers.push({ ...user, messages: [], newMessages: [], firstNewMessage: '' });
     }
   }
 
@@ -89,8 +93,14 @@ export default class Users {
     ) {
       memberObj.messages.push(message);
 
-      if (message.from === member[0]) {
+      if (message.from === member[0] && !message.status.isReaded) {
+        if (memberObj.newMessages.length === 0) {
+          memberObj.firstNewMessage = message.id;
+        }
         memberObj.newMessages.push(message);
+
+        console.log(memberObj);
+
         emitter.emit('change-users');
         console.log('FIX ME', memberObj);
       }

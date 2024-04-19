@@ -63,6 +63,7 @@ export type Member = {
   login: string;
   messages?: Message[];
   newMessages?: Message[];
+  firstNewMessage?: string;
 };
 
 export type Auth = {

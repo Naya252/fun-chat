@@ -173,13 +173,14 @@ const formatDate = (datetime: number): string => {
   return formattedDateTime;
 };
 
-export const createMessage = (msg: Message): BaseComponent => {
-  const message = new BaseComponent(
-    'div',
-    ['px-3', 'py-2', 'my-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'],
-    {},
-  );
+export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
+  const wrapper = new BaseComponent('div', ['my-3'], {});
+  const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
+  wrapper.append(message);
 
+  if (msg.id === firstNewMessage) {
+    wrapper.setClasses(['divider']);
+  }
   const header = new BaseComponent('div', ['flex', 'justify-between', 'gap-2', 'text-xs']);
   const author = new BaseComponent('div', [], {}, msg.from === store.user.getLogin() ? 'you' : msg.from);
   const msgDate = formatDate(msg.datetime);
@@ -205,5 +206,5 @@ export const createMessage = (msg: Message): BaseComponent => {
   }
 
   message.append(header, content, footer);
-  return message;
+  return wrapper;
 };

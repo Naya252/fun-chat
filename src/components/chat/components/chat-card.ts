@@ -4,8 +4,8 @@ import type BaseInput from '@/components/shared/base-input/base-input';
 import * as repository from '@/repositories/front-requests';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
-import { isMember, isMessages, isMessage } from '@/repositories/validation';
-import { type Message } from '@/types/api-types';
+import { isMember, isMessage } from '@/repositories/validation';
+import type { Message, Member } from '@/types/api-types';
 import {
   createTextField,
   createMessage,
@@ -82,8 +82,9 @@ export default class Chat extends BaseComponent {
       const { login, isLogined } = member;
 
       const data = store.users.getChatData(login);
+      console.log('!!!!!!!!!!', data?.firstNewMessage);
       if (data !== undefined) {
-        this.drawHistory(data.messages);
+        this.drawHistory(data);
       }
 
       this.redrawMemberInfo(login, isLogined);
@@ -119,17 +120,18 @@ export default class Chat extends BaseComponent {
     this.messages = [...this.messages, ...messages];
   }
 
-  private drawHistory(messages: unknown): void {
+  private drawHistory(member: Member): void {
     this.messages = [];
 
-    if (isMessages(messages)) {
-      this.changeMessages(messages);
-
+    if (member.messages !== undefined && member.firstNewMessage !== undefined) {
+      this.changeMessages(member.messages);
       const elements: BaseComponent[] = [];
+
+      const first = member.firstNewMessage;
 
       if (this.messages.length > 0) {
         this.messages.forEach((el) => {
-          const msg = createMessage(el);
+          const msg = createMessage(el, first);
           elements.push(msg);
         });
       } else {
@@ -146,12 +148,15 @@ export default class Chat extends BaseComponent {
       const data = store.users.getChatData(this.member);
 
       if (
-        (data !== undefined && data.messages && data.messages?.length > this.messages.length) ||
-        this.messages.length === 1
+        data !== undefined &&
+        'firstNewMessage' in data &&
+        data.firstNewMessage !== undefined &&
+        data.messages &&
+        (data.messages?.length > this.messages.length || this.messages.length === 1)
       ) {
         this.changeMessages([message]);
 
-        const msg = createMessage(message);
+        const msg = createMessage(message, data.firstNewMessage);
         if (this.messages.length === 1) {
           this.messagesCard.replaceChildren(msg);
         } else {
