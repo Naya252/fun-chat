@@ -155,7 +155,7 @@ export const selectMember = (e: Event): void => {
 };
 
 export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
-  const wrapper = new BaseComponent('div', ['my-3'], {});
+  const wrapper = new BaseComponent('div', ['pt-4', 'pb-1'], {});
   const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
   wrapper.append(message);
 

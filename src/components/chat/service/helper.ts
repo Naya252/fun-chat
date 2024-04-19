@@ -20,6 +20,6 @@ export const formatDate = (datetime: number): string => {
 
 export const scrollTo = (element: HTMLElement | ChildNode): void => {
   if (element instanceof HTMLElement) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+    element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
   }
 };

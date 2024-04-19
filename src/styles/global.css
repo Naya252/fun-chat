@@ -112,7 +112,7 @@
 .divider::before {
   content: '';
   position: absolute;
-  top: -0.75rem;
+  top: 0.3rem;
   left: 0;
   width: 100%;
   border-top: 2px solid #38bdf8;
@@ -121,7 +121,7 @@
 .divider:after {
   content: 'New';
   position: absolute;
-  top: -1.25rem;
+  top: -0.2rem;
   left: calc(50% - 1rem);
   font-size: 0.7rem;
   color: #38bdf8;
