@@ -101,6 +101,20 @@ export const isStatusMsg = (value: unknown): value is StatusMsg => {
   return false;
 };
 
+export const isOneStatusMsg = (value: unknown): value is StatusMsg => {
+  if (
+    value !== null &&
+    typeof value === 'object' &&
+    (('isDelivered' in value && typeof value.isDelivered === 'boolean') ||
+      ('isReaded' in value && typeof value.isReaded === 'boolean') ||
+      ('isEdited' in value && typeof value.isEdited === 'boolean'))
+  ) {
+    return true;
+  }
+
+  return false;
+};
+
 export const isMessage = (value: unknown): value is Message => {
   if (
     value !== null &&
