@@ -159,6 +159,19 @@ export const selectMember = (e: Event): void => {
   }
 };
 
+export const setStatusText = (msg: Message): string => {
+  const deliveredStatus = msg.status.isDelivered ? 'delivered' : 'sent';
+  const readedStatus = msg.status.isReaded ? 'read' : '';
+
+  return readedStatus || deliveredStatus;
+};
+
+export const setEditedText = (msg: Message): string => {
+  const editedStatus = msg.status.isEdited ? 'edited' : '';
+
+  return editedStatus;
+};
+
 export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
   const wrapper = new BaseComponent('div', ['pt-4', 'pb-1', 'flex'], { id: msg.id });
   const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
@@ -180,12 +193,9 @@ export const createMessage = (msg: Message, firstNewMessage: string): BaseCompon
 
   if (msg.from === store.user.getLogin()) {
     message.setClasses(['ml-auto', 'bg-gray-700']);
-    const deliveredStatus = msg.status.isDelivered ? 'delivered' : '';
-    const readedStatus = msg.status.isReaded ? 'readed' : '';
-    const editedStatus = msg.status.isEdited ? 'edited' : '';
 
-    const status = new BaseComponent('p', [], {}, readedStatus || deliveredStatus);
-    const edited = new BaseComponent('p', [], {}, editedStatus);
+    const status = new BaseComponent('p', [], {}, setStatusText(msg));
+    const edited = new BaseComponent('p', [], {}, setEditedText(msg));
 
     footer.append(edited, status);
   } else {

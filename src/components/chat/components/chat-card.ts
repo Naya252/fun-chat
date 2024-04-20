@@ -12,6 +12,8 @@ import {
   createChat,
   createMessagesCard,
   createSendButton,
+  setStatusText,
+  setEditedText,
 } from '../service/chat-service';
 import { scrollTo, readMessages } from '../service/helper';
 
@@ -73,7 +75,45 @@ export default class Chat extends BaseComponent {
     emitter.on('get-message', (message) => this.changeHistory(message));
     emitter.on('change-users', (member) => this.checkMember(member));
     emitter.on('add-divider', (element) => this.addDivider(element));
-    emitter.on('clean-divider', (element) => this.removeDivider(element));
+    emitter.on('clean-divider', (data) => this.removeDivider(data));
+    emitter.on('change-status', (element) => this.changeStatus(element));
+  }
+
+  private changeStatus(data: unknown): void {
+    if (
+      data !== null &&
+      typeof data === 'object' &&
+      'member' in data &&
+      typeof data.member === 'string' &&
+      'msg' in data &&
+      typeof data.msg === 'object' &&
+      isMessage(data.msg)
+    ) {
+      if (this.member === data.member && data.msg.from === store.user.getLogin()) {
+        const { msg } = data;
+        const messages = this.messagesCard.getChildren();
+        const message = Array.from(messages).find((m) => m instanceof HTMLElement && m.id === msg.id);
+
+        const footer = message?.lastChild?.lastChild;
+        if (footer === null || footer === undefined) {
+          return;
+        }
+        const first = footer.firstChild;
+        const last = footer.lastChild;
+
+        if (
+          first !== null &&
+          first !== undefined &&
+          first instanceof HTMLElement &&
+          last !== null &&
+          last !== undefined &&
+          last instanceof HTMLElement
+        ) {
+          first.textContent = setEditedText(data.msg);
+          last.textContent = setStatusText(data.msg);
+        }
+      }
+    }
   }
 
   private addDivider(element: unknown): void {
@@ -114,7 +154,6 @@ export default class Chat extends BaseComponent {
       const { login, isLogined } = member;
 
       const data = store.users.getChatData(login);
-      console.log('!!!!!!!!!!', data?.firstNewMessage);
       if (data !== undefined) {
         this.drawHistory(data);
       }
@@ -158,6 +197,7 @@ export default class Chat extends BaseComponent {
 
     if (member.messages !== undefined && member.firstNewMessage !== undefined) {
       this.changeMessages(member.messages);
+
       const elements: BaseComponent[] = [];
 
       const first = member.firstNewMessage;

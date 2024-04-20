@@ -5,16 +5,14 @@ const setReadSatus = (msg: Message, isReaded: boolean | null): void => {
   if (isReaded === null) {
     return;
   }
-
   const copyMsg = msg;
   copyMsg.status.isReaded = isReaded;
 };
 
-const setDelideredSatus = (msg: Message, isDelivered: boolean | null): void => {
+const setDeliveredSatus = (msg: Message, isDelivered: boolean | null): void => {
   if (isDelivered === null) {
     return;
   }
-
   const copyMsg = msg;
   copyMsg.status.isDelivered = isDelivered;
 };
@@ -23,7 +21,7 @@ const setEditedSatus = (msg: Message, isEdited: boolean | null): void => {
   if (isEdited === null) {
     return;
   }
-
+  console.log('EDITED');
   const copyMsg = msg;
   copyMsg.status.isEdited = isEdited;
 };
@@ -156,20 +154,24 @@ export default class Users {
   ): void {
     const allUsers = this.getUsers();
     allUsers.forEach((user) => {
+      if (user.messages?.some((message) => message.id === id)) {
+        const msg = user.messages.find((el) => el.id === id);
+
+        if (msg !== undefined) {
+          setDeliveredSatus(msg, isDelivered);
+          setReadSatus(msg, isReaded);
+          setEditedSatus(msg, isEdited);
+
+          emitter.emit('change-status', { member: user.login, msg });
+        }
+      }
       if (user.newMessages?.some((message) => message.id === id)) {
         cleanFirstNewMessage(id, user);
         const msg = user.newMessages.find((el) => el.id === id);
 
         if (msg !== undefined) {
-          setReadSatus(msg, isReaded);
-          setDelideredSatus(msg, isDelivered);
-          setEditedSatus(msg, isEdited);
           setNewMessages(user, msg.id);
         }
-
-        console.log('CHANGE MSG - msg');
-
-        console.log(user);
       }
     });
   }

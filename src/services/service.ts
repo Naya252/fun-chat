@@ -113,8 +113,6 @@ const changeStatusMsg = (data: Record<string, string> | Record<string, Record<st
   if (typeof isEdited === 'boolean') {
     store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
   }
-
-  console.log(message);
 };
 
 const changeError = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
@@ -146,7 +144,7 @@ export const callMessages = (data: string): void => {
     [USER_DICTIONARY.externalLogout]: changeUsers,
     [MESSAGE_DICTIONARY.send]: getMessage,
     [MESSAGE_DICTIONARY.fromUser]: getHistory,
-    [MESSAGE_DICTIONARY.deliver]: null,
+    [MESSAGE_DICTIONARY.deliver]: changeStatusMsg,
     [MESSAGE_DICTIONARY.read]: changeStatusMsg,
     [MESSAGE_DICTIONARY.delete]: null,
     [MESSAGE_DICTIONARY.edit]: null,
