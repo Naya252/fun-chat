@@ -13,7 +13,7 @@ import {
   createMessagesCard,
   createSendButton,
 } from '../service/chat-service';
-import { scrollTo } from '../service/helper';
+import { scrollTo, readMessages } from '../service/helper';
 
 export default class Chat extends BaseComponent {
   private chat: BaseComponent;
@@ -44,6 +44,8 @@ export default class Chat extends BaseComponent {
 
     this.messages = [];
     this.messagesCard = createMessagesCard();
+    this.messagesCard.addListener('wheel', () => readMessages(this.member));
+    this.messagesCard.addListener('click', () => readMessages(this.member));
 
     this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-msg-field', 'w-full'], {
       disabled: '',
@@ -71,11 +73,28 @@ export default class Chat extends BaseComponent {
     emitter.on('get-message', (message) => this.changeHistory(message));
     emitter.on('change-users', (member) => this.checkMember(member));
     emitter.on('add-divider', (element) => this.addDivider(element));
+    emitter.on('clean-divider', (element) => this.removeDivider(element));
   }
 
   private addDivider(element: unknown): void {
     if (element instanceof BaseComponent) {
       this.divider = element;
+    }
+  }
+
+  private removeDivider(data: unknown): void {
+    if (
+      data !== null &&
+      typeof data === 'object' &&
+      'member' in data &&
+      typeof data.member === 'string' &&
+      'idMsg' in data &&
+      typeof data.idMsg === 'string'
+    ) {
+      if (this.member === data.member && this.divider?.getId() === data.idMsg) {
+        this.divider.removeClasses(['divider']);
+        this.divider = null;
+      }
     }
   }
 
@@ -125,6 +144,7 @@ export default class Chat extends BaseComponent {
 
     if (message.length > 0) {
       repository.sendMessage(this.member, message);
+      readMessages(this.member);
       this.textField.changeValue('');
     }
   }
@@ -143,8 +163,11 @@ export default class Chat extends BaseComponent {
       const first = member.firstNewMessage;
 
       if (this.messages.length > 0) {
-        this.messages.forEach((el) => {
+        this.messages.forEach((el, i) => {
           const msg = createMessage(el, first);
+          if (i === 0) {
+            msg.setClasses(['mt-auto']);
+          }
           elements.push(msg);
         });
       } else {
@@ -177,7 +200,11 @@ export default class Chat extends BaseComponent {
           this.messagesCard.append(msg);
         }
 
-        scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
+        if (message.from !== this.member) {
+          scrollTo(msg.getElement());
+        } else {
+          scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
+        }
       }
     }
   }

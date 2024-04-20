@@ -2,6 +2,7 @@ import BaseComponent from '@/components/shared/base-component';
 import emitter from '@/utils/event-emitter';
 import { type Member } from '@/types/api-types';
 import type BaseInput from '@/components/shared/base-input/base-input';
+import store from '@/store/store';
 import {
   createSide,
   createUsersWrapper,
@@ -35,6 +36,7 @@ export default class Users extends BaseComponent {
     this.append(this.side);
 
     emitter.on('change-users', () => this.changeUsers(getMembers()));
+    emitter.on('change-counter', (login) => this.changeCounter(login));
     this.changeUsers(getMembers());
   }
 
@@ -48,5 +50,29 @@ export default class Users extends BaseComponent {
     const value = this.searchField.getValue();
     users = users.filter((el) => el.login.toLowerCase().includes(value.toLowerCase()));
     this.changeUsers(users);
+  }
+
+  private changeCounter(login: unknown): void {
+    if (typeof login !== 'string') {
+      return;
+    }
+
+    const value = this.users.find((el) => el.getId() === `user-${login}`);
+    const data = store.users.getChatData(login);
+    const counter = value?.getLastChild();
+
+    if (data !== undefined && data.newMessages !== undefined && counter !== undefined) {
+      counter.textContent = data.newMessages.length.toString();
+
+      if (!(counter instanceof HTMLElement)) {
+        return;
+      }
+
+      if (data.newMessages.length === 0) {
+        counter.classList.add('hide');
+      } else {
+        counter.classList.remove('hide');
+      }
+    }
   }
 }

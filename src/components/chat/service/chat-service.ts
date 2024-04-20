@@ -67,7 +67,7 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     return users;
   }
   usrs.forEach((el) => {
-    const user = new BaseComponent<HTMLUListElement>('li', ['member', 'flex']);
+    const user = new BaseComponent<HTMLUListElement>('li', ['member', 'flex'], { id: `user-${el.login}` });
     const link = new BaseComponent<HTMLAnchorElement>(
       'button',
       ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start', 'truncate'],
@@ -79,13 +79,18 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     }
 
     user.append(link);
-    if (el.newMessages !== undefined && el.newMessages?.length > 0) {
+    if (el.newMessages !== undefined) {
       const counter = new BaseComponent<HTMLUListElement>(
         'div',
         ['counter', 'bg-sky-700', 'px-3', 'py-1', 'rounded-full', 'text-white', 'font-semibold', 'text-xs'],
         {},
         el.newMessages?.length.toString(),
       );
+
+      if (el.newMessages?.length === 0) {
+        counter.setClasses(['hide']);
+      }
+
       user.append(link, counter);
     }
     users.push(user);
@@ -155,7 +160,7 @@ export const selectMember = (e: Event): void => {
 };
 
 export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
-  const wrapper = new BaseComponent('div', ['pt-4', 'pb-1', 'flex'], {});
+  const wrapper = new BaseComponent('div', ['pt-4', 'pb-1', 'flex'], { id: msg.id });
   const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
   wrapper.append(message);
 

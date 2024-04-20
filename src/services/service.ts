@@ -2,7 +2,16 @@ import alerts from '@/components/alert/alert';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
 import { setUser } from '@/repositories/user-repository';
-import { isAuth, isError, isResponse, isUsers, isMember, isMessages, isMessage } from '@/repositories/validation';
+import {
+  isAuth,
+  isError,
+  isResponse,
+  isUsers,
+  isMember,
+  isMessages,
+  isMessage,
+  isOneStatusMsg,
+} from '@/repositories/validation';
 import { USER_DICTIONARY, ERROR_TYPE, MESSAGE_DICTIONARY } from '../types/api-types';
 
 const changeAuth = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
@@ -78,6 +87,36 @@ const getMessage = (data: Record<string, string> | Record<string, Record<string,
   store.users.setMessages(message);
 };
 
+const changeStatusMsg = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+  const { message } = data;
+
+  if (
+    typeof message !== 'object' ||
+    !message.id ||
+    typeof message.id !== 'string' ||
+    !message.status ||
+    typeof message.status !== 'object' ||
+    !isOneStatusMsg(message.status)
+  ) {
+    throw new Error('payload is not message');
+  }
+
+  const { status } = message;
+  const { isReaded, isDelivered, isEdited } = status;
+
+  if (typeof isReaded === 'boolean') {
+    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+  }
+  if (typeof isDelivered === 'boolean') {
+    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+  }
+  if (typeof isEdited === 'boolean') {
+    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+  }
+
+  console.log(message);
+};
+
 const changeError = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   if (!isError(data)) {
     throw new Error('payload is not error');
@@ -108,7 +147,7 @@ export const callMessages = (data: string): void => {
     [MESSAGE_DICTIONARY.send]: getMessage,
     [MESSAGE_DICTIONARY.fromUser]: getHistory,
     [MESSAGE_DICTIONARY.deliver]: null,
-    [MESSAGE_DICTIONARY.read]: null,
+    [MESSAGE_DICTIONARY.read]: changeStatusMsg,
     [MESSAGE_DICTIONARY.delete]: null,
     [MESSAGE_DICTIONARY.edit]: null,
   };
