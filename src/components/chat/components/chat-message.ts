@@ -43,8 +43,10 @@ export default class ChatMessage extends BaseComponent {
     footer.append(this.edited, this.status);
 
     this.changeClasses(msg);
+    this.setEdited(msg);
 
     this.message.append(header, this.content, footer);
+    emitter.on('finish-edit', () => this.cancelEdit());
   }
 
   public changeDivider(id: string, firstNewMessage: string): void {
@@ -64,7 +66,6 @@ export default class ChatMessage extends BaseComponent {
       this.message.setClasses(['ml-auto', 'bg-gray-700']);
 
       this.setStatus(msg);
-      this.setEdited(msg);
     } else {
       this.message.setClasses(['mr-auto', 'bg-gray-800']);
     }
@@ -78,7 +79,28 @@ export default class ChatMessage extends BaseComponent {
     this.edited.setTextContent(setEditedText(msg));
   }
 
+  public setText(text: string): void {
+    this.content.setTextContent(text);
+  }
+
   public addClassFirstMsg(): void {
     this.setClasses(['mt-auto']);
+  }
+
+  public setClassMessage(classes: string[]): void {
+    this.message.setClasses([...classes]);
+  }
+
+  public getContent(): string {
+    const element = this.content.getElement();
+    return element.textContent || '';
+  }
+
+  public cancelEdit(): void {
+    this.message.removeClasses(['border-2', 'border-sky-500']);
+  }
+
+  public startEdit(): void {
+    this.message.setClasses(['border-2', 'border-sky-500']);
   }
 }

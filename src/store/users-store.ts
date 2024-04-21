@@ -17,13 +17,14 @@ const setDeliveredSatus = (msg: Message, isDelivered: boolean | null): void => {
   copyMsg.status.isDelivered = isDelivered;
 };
 
-const setEditedSatus = (msg: Message, isEdited: boolean | null): void => {
-  if (isEdited === null) {
+const setEditedSatus = (msg: Message, isEdited: boolean | null, text: string | null): void => {
+  if (isEdited === null || text === null) {
     return;
   }
-  console.log('EDITED');
+
   const copyMsg = msg;
   copyMsg.status.isEdited = isEdited;
+  copyMsg.text = text;
 };
 
 const deleteMessage = (msg: Message, isDeleted: boolean | null): void => {
@@ -58,6 +59,7 @@ export default class Users {
   private isGetInactive: boolean;
   private currentUser: string;
   private selectedMember: Member;
+  private selectedMessage: string;
 
   constructor() {
     this.activeUsers = [];
@@ -66,6 +68,15 @@ export default class Users {
     this.isGetInactive = false;
     this.currentUser = '';
     this.selectedMember = { login: '', isLogined: false };
+    this.selectedMessage = '';
+  }
+
+  public getSelectedMessage(): string {
+    return this.selectedMessage;
+  }
+
+  public setSelectedMessage(selectedMessage: string): void {
+    this.selectedMessage = selectedMessage;
   }
 
   public getSelectedMember(): Member {
@@ -170,6 +181,7 @@ export default class Users {
     isDelivered: boolean | null = null,
     isEdited: boolean | null = null,
     isDeleted: boolean | null = null,
+    text: string | null = null,
   ): void {
     const allUsers = this.getUsers();
     allUsers.forEach((user) => {
@@ -179,7 +191,7 @@ export default class Users {
         if (msg !== undefined) {
           setDeliveredSatus(msg, isDelivered);
           setReadSatus(msg, isReaded);
-          setEditedSatus(msg, isEdited);
+          setEditedSatus(msg, isEdited, text);
           deleteMessage(msg, isDeleted);
 
           emitter.emit('change-status', { member: user.login, msg });

@@ -23,8 +23,6 @@ export default class Chat extends BaseComponent {
   private messages: Message[];
   private divider: BaseComponent | null;
 
-  private selectedMsg: string;
-
   constructor() {
     super('div', ['flex', 'w-2/3']);
 
@@ -49,7 +47,6 @@ export default class Chat extends BaseComponent {
     this.addEmitterListeners();
 
     this.divider = null;
-    this.selectedMsg = '';
   }
 
   private addEmitterListeners(): void {
@@ -66,15 +63,25 @@ export default class Chat extends BaseComponent {
       const edit = target.closest('.edit-message');
       const remove = target.closest('.remove-message');
       if (edit) {
-        console.log(target);
-        console.log(this.selectedMsg);
+        this.editMessage();
       }
       if (remove) {
-        repository.deleteMessage(this.selectedMsg);
+        repository.deleteMessage(store.users.getSelectedMessage());
       }
     }
 
     this.messageActions.setClasses(['hide']);
+  }
+
+  private editMessage(): void {
+    const messageComponent = this.messagesComponents.find((el) => el.getId() === store.users.getSelectedMessage());
+    if (messageComponent === undefined) {
+      return;
+    }
+
+    messageComponent.startEdit();
+    const content = messageComponent.getContent();
+    this.chatActions.fill(content);
   }
 
   private showMsgActions(event: Event): void {
@@ -101,13 +108,13 @@ export default class Chat extends BaseComponent {
       }
       const id = parent.getAttribute('id');
       if (typeof id === 'string') {
-        this.selectedMsg = id;
+        store.users.setSelectedMessage(id);
       }
 
       msg.append(this.messageActions.getElement());
     } else {
       this.messageActions.setClasses(['hide']);
-      this.selectedMsg = '';
+      store.users.setSelectedMessage('');
     }
   }
 
@@ -128,13 +135,11 @@ export default class Chat extends BaseComponent {
       }
 
       if (store.users.getSelectedMember().login === data.member && data.msg.from === store.user.getLogin()) {
-        console.log('data', msg);
         if (msg.status.isDeleted) {
           this.deleteMsgFromHistory(msg, messageComponent, data.msg.to);
           return;
         }
         messageComponent.setStatus(data.msg);
-        messageComponent.setEdited(data.msg);
       }
 
       if (store.users.getSelectedMember().login === data.member && data.msg.to === store.user.getLogin()) {
@@ -142,6 +147,9 @@ export default class Chat extends BaseComponent {
           this.deleteMsgFromHistory(msg, messageComponent, data.msg.from, true);
         }
       }
+
+      messageComponent.setEdited(data.msg);
+      messageComponent.setText(data.msg.text);
     }
   }
 

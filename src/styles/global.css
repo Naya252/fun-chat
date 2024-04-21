@@ -22,7 +22,7 @@
 }
 
 .hide {
-  display: none;
+  display: none !important;
 }
 
 .user-login {
@@ -133,4 +133,22 @@
 .action-card {
   position: absolute;
   z-index: 50;
+}
+
+.chat-actions {
+  position: relative;
+}
+
+.cancel-btn {
+  position: absolute;
+  width: 1.5rem;
+  height: 1.5rem;
+  right: 5rem;
+  top: -0.5rem;
+  padding: 8px !important;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
 }

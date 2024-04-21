@@ -101,7 +101,8 @@ const changeMsg = (data: Record<string, string> | Record<string, Record<string, 
     throw new Error('payload is not message');
   }
 
-  const { status } = message;
+  const { status, text } = message;
+
   const { isReaded, isDelivered, isEdited, isDeleted } = status;
 
   if (typeof isReaded === 'boolean') {
@@ -110,8 +111,8 @@ const changeMsg = (data: Record<string, string> | Record<string, Record<string, 
   if (typeof isDelivered === 'boolean') {
     store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
   }
-  if (typeof isEdited === 'boolean') {
-    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
+  if (typeof isEdited === 'boolean' && typeof text === 'string') {
+    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted, text);
   }
   if (typeof isDeleted === 'boolean') {
     store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
@@ -128,8 +129,6 @@ const changeError = (data: Record<string, string> | Record<string, Record<string
 
 export const callMessages = (data: string): void => {
   const result: unknown = JSON.parse(data);
-
-  console.log(JSON.parse(data));
 
   if (!isResponse(result)) {
     throw new Error('result is not correct');
@@ -164,6 +163,5 @@ export const closedWs = (): void => {
 };
 
 export const openedWs = (): void => {
-  console.log('WebSocket connected');
   emitter.emit('connect-ws');
 };

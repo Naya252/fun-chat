@@ -111,7 +111,7 @@ export const deleteMessage = (id: string): void => {
   );
 };
 
-export const editMessage = (id: string): void => {
+export const editMessage = (id: string, text: string): void => {
   ws.send(
     JSON.stringify({
       id: 'string',
@@ -119,6 +119,7 @@ export const editMessage = (id: string): void => {
       payload: {
         message: {
           id,
+          text,
         },
       },
     }),
