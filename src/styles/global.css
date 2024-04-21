@@ -29,6 +29,10 @@
   margin-left: 8px !important;
 }
 
+.header-container {
+  overflow: hidden;
+}
+
 .fun-chat {
   font-weight: 600;
   line-height: 100%;
@@ -111,7 +115,8 @@
   max-width: 66.6%;
 }
 
-.member-login {
+.member-login,
+.user-login {
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;

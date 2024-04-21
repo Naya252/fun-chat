@@ -22,7 +22,7 @@ export const createTextField = (
       ...attrs,
     },
     'text',
-    ['bg-gray-800', 'ring-gray-800', 'inner-box-shadow', ...classes],
+    ['bg-white/[.02]', 'ring-gray-800', ...classes],
     mainClasses,
   );
 
@@ -36,8 +36,7 @@ export const createSide = (): BaseComponent => {
     'w-full',
     'mr-6',
     'my-6',
-    'px-6',
-    'py-6',
+
     'rounded-xl',
     'bg-white/[.04]',
     'shadow-md',
@@ -134,6 +133,7 @@ export const selectMember = (e: Event): void => {
   const wrapper = target.closest('.member');
   const member = target.closest('.member button');
   if (wrapper !== null) {
+    emitter.emit('remove-selected-class');
     wrapper.classList.add('selected-user');
   }
   if (member) {

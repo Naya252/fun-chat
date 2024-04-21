@@ -25,7 +25,7 @@ export default class Users extends BaseComponent {
     this.users = createUsers([]);
     this.userWrapper = createUsersWrapper();
     this.userWrapper.append(...this.users);
-    this.userWrapper.addListener('click', (e: Event) => this.selectUser(e));
+    this.userWrapper.addListener('click', (e: Event) => selectMember(e));
 
     this.searchField = createTextField('Search');
     this.searchField.inputListener('input', () => {
@@ -37,6 +37,7 @@ export default class Users extends BaseComponent {
 
     emitter.on('change-users', () => this.changeUsers(getMembers()));
     emitter.on('change-counter', (login) => this.changeCounter(login));
+    emitter.on('remove-selected-class', () => this.removeSelectedClass());
     this.changeUsers(getMembers());
   }
 
@@ -76,8 +77,7 @@ export default class Users extends BaseComponent {
     }
   }
 
-  private selectUser(e: Event): void {
+  private removeSelectedClass(): void {
     this.users.forEach((el) => el.removeClasses(['selected-user']));
-    selectMember(e);
   }
 }
