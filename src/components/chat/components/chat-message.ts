@@ -31,12 +31,17 @@ export default class ChatMessage extends BaseComponent {
 
     this.changeDivider(msg.id, firstNewMessage);
     const header = new BaseComponent('div', ['flex', 'justify-between', 'gap-2', 'text-xs']);
-    const author = new BaseComponent('div', [], {}, msg.from === store.user.getLogin() ? 'you' : msg.from);
+    const author = new BaseComponent(
+      'div',
+      ['member-login'],
+      {},
+      msg.from === store.user.getLogin() ? 'you' : msg.from,
+    );
     const msgDate = formatDate(msg.datetime);
     const date = new BaseComponent('div', [], {}, msgDate.toString());
     header.append(author, date);
 
-    this.content = new BaseComponent('div', ['text-clip', 'text-gray-300'], {}, msg.text);
+    this.content = new BaseComponent('div', ['text-gray-300', 'content-msg'], {}, msg.text);
     const footer = new BaseComponent('div', ['text-xs', 'flex', 'justify-between', 'gap-2']);
     this.status = new BaseComponent('p');
     this.edited = new BaseComponent('p');

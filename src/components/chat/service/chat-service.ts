@@ -68,10 +68,13 @@ export const createUsers = (usrs: Member[]): BaseComponent[] => {
     const user = new BaseComponent<HTMLUListElement>('li', ['member', 'flex'], { id: `user-${el.login}` });
     const link = new BaseComponent<HTMLAnchorElement>(
       'button',
-      ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start', 'truncate'],
+      ['hover:text-sky-400', 'w-full', 'flex', 'justify-items-start', 'member-login'],
       { id: el.login },
-      el.login,
     );
+    const login = new BaseComponent('span', ['member-login']);
+    login.setTextContent(el.login);
+    link.append(login);
+
     if (el.isLogined) {
       user.setClasses(['active', 'flex']);
     }

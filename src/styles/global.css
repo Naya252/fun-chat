@@ -106,6 +106,17 @@
   max-width: 66.6%;
 }
 
+.member-login {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.content-msg {
+  word-wrap: break-word;
+  hyphens: auto;
+}
+
 .divider {
   position: relative;
 }
