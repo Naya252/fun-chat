@@ -26,6 +26,14 @@ const setEditedSatus = (msg: Message, isEdited: boolean | null): void => {
   copyMsg.status.isEdited = isEdited;
 };
 
+const deleteMessage = (msg: Message, isDeleted: boolean | null): void => {
+  if (isDeleted === null) {
+    return;
+  }
+  const copyMsg = msg;
+  copyMsg.status.isDeleted = isDeleted;
+};
+
 const setNewMessages = (user: Member, id: string): void => {
   const copyUser = user;
   if (copyUser.newMessages instanceof Array) {
@@ -49,6 +57,7 @@ export default class Users {
   private isGetActive: boolean;
   private isGetInactive: boolean;
   private currentUser: string;
+  private selectedMember: Member;
 
   constructor() {
     this.activeUsers = [];
@@ -56,6 +65,15 @@ export default class Users {
     this.isGetActive = false;
     this.isGetInactive = false;
     this.currentUser = '';
+    this.selectedMember = { login: '', isLogined: false };
+  }
+
+  public getSelectedMember(): Member {
+    return this.selectedMember;
+  }
+
+  public setSelectedMember(selectedMember: Member): void {
+    this.selectedMember = { ...selectedMember };
   }
 
   private setCurrentUser(currentUser: string): void {
@@ -146,11 +164,12 @@ export default class Users {
     emitter.emit('get-message', message);
   }
 
-  public setStatus(
+  public setMessage(
     id: string,
     isReaded: boolean | null = null,
     isDelivered: boolean | null = null,
     isEdited: boolean | null = null,
+    isDeleted: boolean | null = null,
   ): void {
     const allUsers = this.getUsers();
     allUsers.forEach((user) => {
@@ -161,6 +180,7 @@ export default class Users {
           setDeliveredSatus(msg, isDelivered);
           setReadSatus(msg, isReaded);
           setEditedSatus(msg, isEdited);
+          deleteMessage(msg, isDeleted);
 
           emitter.emit('change-status', { member: user.login, msg });
         }
@@ -187,5 +207,21 @@ export default class Users {
     const data = this.getUsers().find((user) => user.login === member);
 
     return data;
+  }
+
+  public removeMessages(login: string, id: string): void {
+    const data = this.getChatData(login);
+    if (
+      data !== undefined &&
+      data.messages instanceof Array &&
+      data.newMessages instanceof Array &&
+      typeof data.firstNewMessage === 'string'
+    ) {
+      data.messages = data.messages.filter((el) => el.id !== id);
+      data.newMessages = data.newMessages.filter((el) => el.id !== id);
+      if (data.firstNewMessage === id && data.newMessages[0]) {
+        data.firstNewMessage = data.newMessages[0].id;
+      }
+    }
   }
 }

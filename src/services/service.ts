@@ -87,7 +87,7 @@ const getMessage = (data: Record<string, string> | Record<string, Record<string,
   store.users.setMessages(message);
 };
 
-const changeStatusMsg = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
+const changeMsg = (data: Record<string, string> | Record<string, Record<string, string>>): void => {
   const { message } = data;
 
   if (
@@ -102,16 +102,19 @@ const changeStatusMsg = (data: Record<string, string> | Record<string, Record<st
   }
 
   const { status } = message;
-  const { isReaded, isDelivered, isEdited } = status;
+  const { isReaded, isDelivered, isEdited, isDeleted } = status;
 
   if (typeof isReaded === 'boolean') {
-    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
   }
   if (typeof isDelivered === 'boolean') {
-    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
   }
   if (typeof isEdited === 'boolean') {
-    store.users.setStatus(message.id, isReaded, isDelivered, isEdited);
+    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
+  }
+  if (typeof isDeleted === 'boolean') {
+    store.users.setMessage(message.id, isReaded, isDelivered, isEdited, isDeleted);
   }
 };
 
@@ -144,10 +147,10 @@ export const callMessages = (data: string): void => {
     [USER_DICTIONARY.externalLogout]: changeUsers,
     [MESSAGE_DICTIONARY.send]: getMessage,
     [MESSAGE_DICTIONARY.fromUser]: getHistory,
-    [MESSAGE_DICTIONARY.deliver]: changeStatusMsg,
-    [MESSAGE_DICTIONARY.read]: changeStatusMsg,
-    [MESSAGE_DICTIONARY.delete]: null,
-    [MESSAGE_DICTIONARY.edit]: null,
+    [MESSAGE_DICTIONARY.deliver]: changeMsg,
+    [MESSAGE_DICTIONARY.read]: changeMsg,
+    [MESSAGE_DICTIONARY.delete]: changeMsg,
+    [MESSAGE_DICTIONARY.edit]: changeMsg,
   };
 
   const fn = dictionary[type];
