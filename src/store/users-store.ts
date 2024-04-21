@@ -197,7 +197,8 @@ export default class Users {
           emitter.emit('change-status', { member: user.login, msg });
         }
       }
-      if (user.newMessages?.some((message) => message.id === id)) {
+
+      if (user.newMessages?.some((message) => message.id === id) && (isReaded || isDeleted)) {
         cleanFirstNewMessage(id, user);
         const msg = user.newMessages.find((el) => el.id === id);
 
