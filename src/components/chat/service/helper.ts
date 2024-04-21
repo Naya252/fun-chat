@@ -21,9 +21,9 @@ export const formatDate = (datetime: number): string => {
   return formattedDateTime;
 };
 
-export const scrollTo = (element: HTMLElement | ChildNode): void => {
+export const scrollTo = (element: HTMLElement | ChildNode, bhvr = false): void => {
   if (element instanceof HTMLElement) {
-    element.scrollIntoView({ behavior: 'smooth', block: 'start', inline: 'nearest' });
+    element.scrollIntoView({ behavior: bhvr ? 'instant' : 'smooth', block: 'start', inline: 'nearest' });
   }
 };
 

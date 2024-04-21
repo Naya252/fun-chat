@@ -244,7 +244,7 @@ export default class Chat extends BaseComponent {
         this.messagesCard.replaceChildren(this.emptyText);
       }
 
-      scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
+      scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild(), true);
     }
   }
 
