@@ -131,7 +131,11 @@ export const selectMember = (e: Event): void => {
   if (target === null || !(target instanceof HTMLElement)) {
     throw new Error('not member');
   }
+  const wrapper = target.closest('.member');
   const member = target.closest('.member button');
+  if (wrapper !== null) {
+    wrapper.classList.add('selected-user');
+  }
   if (member) {
     const login = member.getAttribute('id');
     const isActive = member.parentElement?.classList.contains('active');

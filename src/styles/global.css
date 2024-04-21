@@ -75,6 +75,11 @@
   margin-left: 0 !important;
 }
 
+.member.selected-user {
+  background: #38bff815;
+  color: #38bdf8;
+}
+
 .member::before {
   position: absolute;
   z-index: 2;
