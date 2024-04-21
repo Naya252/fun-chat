@@ -47,6 +47,7 @@ export type StatusMsg = {
   isDelivered: boolean;
   isReaded: boolean;
   isEdited: boolean;
+  isDeleted?: boolean;
 };
 
 export type Message = {

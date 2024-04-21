@@ -66,7 +66,10 @@ export const sendMessage = (to: string, text: string): void => {
   );
 };
 
-export const getHistory = (login: string): void => {
+export const getHistory = (login: unknown): void => {
+  if (typeof login !== 'string') {
+    return;
+  }
   ws.send(
     JSON.stringify({
       id: 'string',

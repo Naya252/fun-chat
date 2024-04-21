@@ -107,7 +107,8 @@ export const isOneStatusMsg = (value: unknown): value is StatusMsg => {
     typeof value === 'object' &&
     (('isDelivered' in value && typeof value.isDelivered === 'boolean') ||
       ('isReaded' in value && typeof value.isReaded === 'boolean') ||
-      ('isEdited' in value && typeof value.isEdited === 'boolean'))
+      ('isEdited' in value && typeof value.isEdited === 'boolean') ||
+      ('isDeleted' in value && typeof value.isDeleted === 'boolean'))
   ) {
     return true;
   }
