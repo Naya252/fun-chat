@@ -1,82 +1,114 @@
 import BaseComponent from '@/components/shared/base-component';
-import type BaseButton from '@/components/shared/base-button/base-button';
-import type BaseInput from '@/components/shared/base-input/base-input';
 import * as repository from '@/repositories/front-requests';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
-import { isMember, isMessage } from '@/repositories/validation';
+import { isMessage } from '@/repositories/validation';
 import type { Message, Member } from '@/types/api-types';
-import {
-  createTextField,
-  createMessage,
-  createChat,
-  createMessagesCard,
-  createSendButton,
-  setStatusText,
-  setEditedText,
-} from '../service/chat-service';
-import { scrollTo, readMessages } from '../service/helper';
+import { createChat, createMessagesCard } from '../service/chat-service';
+import ChatActions from './chat-actions';
+import ChatMemberInfo from './chat-member-info';
+import ChatMessageActions from './chat-message-actions';
+import ChatMessage from './chat-message';
+import { scrollTo, readMessages, calculateActionsPosition } from '../service/helper';
 
 export default class Chat extends BaseComponent {
   private chat: BaseComponent;
-  private textField: BaseInput;
-  private sendButton: BaseButton;
-  private memberLogin: BaseComponent;
-  private memberStatus: BaseComponent;
-  private memberInfo: BaseComponent;
+  private chatActions: ChatActions;
+  private memberInfo: ChatMemberInfo;
+  private messageActions: ChatMessageActions;
   private messagesCard: BaseComponent;
-  private member: string;
+  private messagesComponents: ChatMessage[];
+  private emptyText: BaseComponent;
+
   private messages: Message[];
   private divider: BaseComponent | null;
+
+  private selectedMsg: string;
 
   constructor() {
     super('div', ['flex', 'w-2/3']);
 
-    this.chat = createChat();
-    this.memberLogin = new BaseComponent(
-      'h2',
-      ['font-semibold', 'text-gray-300'],
-      {},
-      'Select a user to send a message...',
-    );
-    this.memberStatus = new BaseComponent('p', ['font-semibold', 'text-gray-300']);
-    this.memberInfo = new BaseComponent('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6']);
-    this.memberInfo.append(this.memberLogin, this.memberStatus);
-    this.member = '';
+    this.messageActions = new ChatMessageActions();
+    this.messageActions.addListener('click', (event: Event) => this.setMessage(event));
+
+    this.memberInfo = new ChatMemberInfo();
+    this.emptyText = new BaseComponent('div', ['my-auto', 'mx-auto'], {}, 'Write your first message...');
 
     this.messages = [];
+    this.messagesComponents = [];
     this.messagesCard = createMessagesCard();
-    this.messagesCard.addListener('wheel', () => readMessages(this.member));
-    this.messagesCard.addListener('click', () => readMessages(this.member));
+    this.messagesCard.addListener('wheel', () => readMessages(store.users.getSelectedMember().login));
+    this.messagesCard.addListener('click', () => readMessages(store.users.getSelectedMember().login));
+    this.messagesCard.addListener('contextmenu', (event: Event) => this.showMsgActions(event));
 
-    this.textField = createTextField('Type text...', ['py-3', 'px-6', 'bg-white/[.02]'], ['chat-msg-field', 'w-full'], {
-      disabled: '',
-    });
-    this.sendButton = createSendButton();
-    this.sendButton.addListener('click', () => this.sendMessage());
-    document.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter' && store.user.isAuth()) {
-        event.preventDefault();
-        this.sendMessage();
-      }
-    });
-    const chatActions = new BaseComponent('div', ['flex', 'max-h-12']);
-    chatActions.append(this.textField, this.sendButton);
+    this.chatActions = new ChatActions();
 
-    this.chat.append(this.memberInfo, this.messagesCard, chatActions);
+    this.chat = createChat();
+    this.chat.append(this.memberInfo, this.messagesCard, this.chatActions);
     this.append(this.chat);
     this.addEmitterListeners();
 
     this.divider = null;
+    this.selectedMsg = '';
   }
 
   private addEmitterListeners(): void {
-    emitter.on('select-member', (member) => this.drawMemberChat(member));
-    emitter.on('get-message', (message) => this.changeHistory(message));
-    emitter.on('change-users', (member) => this.checkMember(member));
+    emitter.on('select-member', () => this.drawMemberChat());
+    emitter.on('get-message', (message) => this.addNewMessageToChat(message));
     emitter.on('add-divider', (element) => this.addDivider(element));
     emitter.on('clean-divider', (data) => this.removeDivider(data));
     emitter.on('change-status', (element) => this.changeStatus(element));
+  }
+
+  private setMessage(event: Event): void {
+    const { target } = event;
+    if (target instanceof HTMLElement) {
+      const edit = target.closest('.edit-message');
+      const remove = target.closest('.remove-message');
+      if (edit) {
+        console.log(target);
+        console.log(this.selectedMsg);
+      }
+      if (remove) {
+        repository.deleteMessage(this.selectedMsg);
+      }
+    }
+
+    this.messageActions.setClasses(['hide']);
+  }
+
+  private showMsgActions(event: Event): void {
+    event.preventDefault();
+
+    const { target } = event;
+
+    if (!(target instanceof HTMLElement)) {
+      return;
+    }
+
+    const msg = target.closest('.message.bg-gray-700');
+
+    if (msg) {
+      emitter.emit('show-msg-actions');
+
+      const position = calculateActionsPosition(event, this.messagesCard.getElement());
+      this.messageActions.changePosition(position);
+      this.messageActions.removeClasses(['hide']);
+
+      const parent = msg.parentElement;
+      if (parent === null) {
+        return;
+      }
+      const id = parent.getAttribute('id');
+      if (typeof id === 'string') {
+        this.selectedMsg = id;
+      }
+
+      msg.append(this.messageActions.getElement());
+    } else {
+      this.messageActions.setClasses(['hide']);
+      this.selectedMsg = '';
+    }
   }
 
   private changeStatus(data: unknown): void {
@@ -89,28 +121,55 @@ export default class Chat extends BaseComponent {
       typeof data.msg === 'object' &&
       isMessage(data.msg)
     ) {
-      if (this.member === data.member && data.msg.from === store.user.getLogin()) {
-        const { msg } = data;
-        const messages = this.messagesCard.getChildren();
-        const message = Array.from(messages).find((m) => m instanceof HTMLElement && m.id === msg.id);
+      const { msg } = data;
+      const messageComponent = this.messagesComponents.find((m) => m.getElement().id === msg.id);
+      if (messageComponent === undefined) {
+        return;
+      }
 
-        const footer = message?.lastChild?.lastChild;
-        if (footer === null || footer === undefined) {
+      if (store.users.getSelectedMember().login === data.member && data.msg.from === store.user.getLogin()) {
+        console.log('data', msg);
+        if (msg.status.isDeleted) {
+          this.deleteMsgFromHistory(msg, messageComponent, data.msg.to);
           return;
         }
-        const first = footer.firstChild;
-        const last = footer.lastChild;
+        messageComponent.setStatus(data.msg);
+        messageComponent.setEdited(data.msg);
+      }
 
-        if (
-          first !== null &&
-          first !== undefined &&
-          first instanceof HTMLElement &&
-          last !== null &&
-          last !== undefined &&
-          last instanceof HTMLElement
-        ) {
-          first.textContent = setEditedText(data.msg);
-          last.textContent = setStatusText(data.msg);
+      if (store.users.getSelectedMember().login === data.member && data.msg.to === store.user.getLogin()) {
+        if (msg.status.isDeleted) {
+          this.deleteMsgFromHistory(msg, messageComponent, data.msg.from, true);
+        }
+      }
+    }
+  }
+
+  private deleteMsgFromHistory(msg: Message, messageComponent: ChatMessage, login: string, hasDivider = false): void {
+    messageComponent.remove();
+
+    this.messages = this.messages.filter((el) => el.id !== msg.id);
+    this.messagesComponents = this.messagesComponents.filter((el) => el.getId() !== msg.id);
+    store.users.removeMessages(login, msg.id);
+
+    if (this.messages.length === 0) {
+      this.messagesCard.replaceChildren(this.emptyText);
+    }
+
+    if (this.messagesComponents.length > 0 && this.messagesComponents[0] !== undefined) {
+      this.messagesComponents[0].addClassFirstMsg();
+
+      if (!msg.status.isReaded && hasDivider) {
+        const data = store.users.getChatData(login);
+
+        if (data !== null && data !== undefined && data.firstNewMessage) {
+          const firstNewMsg = this.messagesComponents.find((el) => el.getId() === data.firstNewMessage);
+
+          if (firstNewMsg === undefined) {
+            return;
+          }
+
+          firstNewMsg.addDivider();
         }
       }
     }
@@ -131,60 +190,22 @@ export default class Chat extends BaseComponent {
       'idMsg' in data &&
       typeof data.idMsg === 'string'
     ) {
-      if (this.member === data.member && this.divider?.getId() === data.idMsg) {
+      if (store.users.getSelectedMember().login === data.member && this.divider?.getId() === data.idMsg) {
         this.divider.removeClasses(['divider']);
         this.divider = null;
       }
     }
   }
 
-  private checkMember(member: unknown): void {
-    if (isMember(member)) {
-      if (this.member === member.login) {
-        const { login, isLogined } = member;
-        this.redrawMemberInfo(login, isLogined);
-      }
-    }
-  }
-
-  private drawMemberChat(member: unknown): void {
+  private drawMemberChat(): void {
     this.divider = null;
 
-    if (isMember(member)) {
-      const { login, isLogined } = member;
+    const member = store.users.getSelectedMember();
+    const data = store.users.getChatData(member.login);
 
-      const data = store.users.getChatData(login);
-      if (data !== undefined) {
-        this.drawHistory(data);
-      }
-
-      this.redrawMemberInfo(login, isLogined);
-    }
-  }
-
-  private redrawMemberInfo(login: string, isLogined: boolean): void {
-    this.member = login;
-    this.textField.setDisabled(false);
-    this.sendButton.setDisabled(false);
-
-    this.memberLogin.setTextContent(login);
-
-    const status = new BaseComponent(
-      'p',
-      [isLogined ? 'text-sky-400' : 'text-slate-500'],
-      {},
-      isLogined ? 'online' : 'offline',
-    );
-    this.memberStatus.replaceChildren(status);
-  }
-
-  private sendMessage(): void {
-    const message = this.textField.getValue().trim();
-
-    if (message.length > 0) {
-      repository.sendMessage(this.member, message);
-      readMessages(this.member);
-      this.textField.changeValue('');
+    if (data !== undefined) {
+      this.drawHistory(data);
+      emitter.emit('change-member-info');
     }
   }
 
@@ -198,31 +219,29 @@ export default class Chat extends BaseComponent {
     if (member.messages !== undefined && member.firstNewMessage !== undefined) {
       this.changeMessages(member.messages);
 
-      const elements: BaseComponent[] = [];
-
+      this.messagesComponents = [];
       const first = member.firstNewMessage;
 
       if (this.messages.length > 0) {
         this.messages.forEach((el, i) => {
-          const msg = createMessage(el, first);
+          const msg = new ChatMessage(el, first);
           if (i === 0) {
-            msg.setClasses(['mt-auto']);
+            msg.addClassFirstMsg();
           }
-          elements.push(msg);
+          this.messagesComponents.push(msg);
+          this.messagesCard.replaceChildren(...this.messagesComponents);
         });
       } else {
-        const emptyText = new BaseComponent('div', ['my-auto', 'mx-auto'], {}, 'Write your first message...');
-        elements.push(emptyText);
+        this.messagesCard.replaceChildren(this.emptyText);
       }
 
-      this.messagesCard.replaceChildren(...elements);
       scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());
     }
   }
 
-  private changeHistory(message: unknown): void {
+  private addNewMessageToChat(message: unknown): void {
     if (isMessage(message)) {
-      const data = store.users.getChatData(this.member);
+      const data = store.users.getChatData(store.users.getSelectedMember().login);
 
       if (
         data !== undefined &&
@@ -233,14 +252,17 @@ export default class Chat extends BaseComponent {
       ) {
         this.changeMessages([message]);
 
-        const msg = createMessage(message, data.firstNewMessage);
+        const msg = new ChatMessage(message, data.firstNewMessage);
         if (this.messages.length === 1) {
+          msg.addClassFirstMsg();
           this.messagesCard.replaceChildren(msg);
         } else {
           this.messagesCard.append(msg);
         }
 
-        if (message.from !== this.member) {
+        this.messagesComponents.push(msg);
+
+        if (message.from !== store.users.getSelectedMember().login) {
           scrollTo(msg.getElement());
         } else {
           scrollTo(this.divider?.getElement() || this.messagesCard.getLastChild());

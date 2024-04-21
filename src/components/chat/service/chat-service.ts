@@ -1,10 +1,8 @@
 import BaseComponent from '@/components/shared/base-component';
 import BaseInput from '@/components/shared/base-input/base-input';
-import BaseButton from '@/components/shared/base-button/base-button';
-import type { Member, Message } from '@/types/api-types';
+import type { Member } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
-import { formatDate } from './helper';
 
 export const createTextField = (
   placeholder: string,
@@ -119,27 +117,6 @@ export const createMessagesCard = (): BaseComponent => {
   return card;
 };
 
-export const createSendButton = (): BaseButton => {
-  const button = new BaseButton(
-    'button',
-    'Send',
-    [
-      'py-3',
-      'max-w-16',
-      'bg-gray-700',
-      'hover:bg-gray-600',
-      'focus-visible:outline-bg-gray-600',
-      'disabled:text-gray-600',
-      'disabled:bg-gray-700/[.02]',
-      'disabled:hover:bg-gray-700/[.02]',
-      'disabled:focus:bg-gray-700/[.02]',
-    ],
-    { disabled: '' },
-  );
-
-  return button;
-};
-
 export const getMembers = (): Member[] => {
   const users = store.users.getUsers();
   const currentUser = store.user.getLogin();
@@ -155,53 +132,7 @@ export const selectMember = (e: Event): void => {
   if (member) {
     const login = member.getAttribute('id');
     const isActive = member.parentElement?.classList.contains('active');
-    emitter.emit('select-member', { login, isLogined: isActive });
+    store.users.setSelectedMember({ login: login || '', isLogined: isActive || false });
+    emitter.emit('select-member');
   }
-};
-
-export const setStatusText = (msg: Message): string => {
-  const deliveredStatus = msg.status.isDelivered ? 'delivered' : 'sent';
-  const readedStatus = msg.status.isReaded ? 'read' : '';
-
-  return readedStatus || deliveredStatus;
-};
-
-export const setEditedText = (msg: Message): string => {
-  const editedStatus = msg.status.isEdited ? 'edited' : '';
-
-  return editedStatus;
-};
-
-export const createMessage = (msg: Message, firstNewMessage: string): BaseComponent => {
-  const wrapper = new BaseComponent('div', ['pt-4', 'pb-1', 'flex'], { id: msg.id });
-  const message = new BaseComponent('div', ['px-3', 'py-2', 'rounded-md', 'message', 'flex', 'flex-col', 'gap-2'], {});
-  wrapper.append(message);
-
-  if (msg.id === firstNewMessage) {
-    wrapper.setClasses(['divider']);
-    emitter.emit('add-divider', wrapper);
-  }
-  const header = new BaseComponent('div', ['flex', 'justify-between', 'gap-2', 'text-xs']);
-  const author = new BaseComponent('div', [], {}, msg.from === store.user.getLogin() ? 'you' : msg.from);
-  const msgDate = formatDate(msg.datetime);
-  const date = new BaseComponent('div', [], {}, msgDate.toString());
-  header.append(author, date);
-
-  const content = new BaseComponent('div', ['text-clip', 'text-gray-300'], {}, msg.text);
-
-  const footer = new BaseComponent('div', ['text-xs', 'flex', 'justify-between', 'gap-2']);
-
-  if (msg.from === store.user.getLogin()) {
-    message.setClasses(['ml-auto', 'bg-gray-700']);
-
-    const status = new BaseComponent('p', [], {}, setStatusText(msg));
-    const edited = new BaseComponent('p', [], {}, setEditedText(msg));
-
-    footer.append(edited, status);
-  } else {
-    message.setClasses(['mr-auto', 'bg-gray-800']);
-  }
-
-  message.append(header, content, footer);
-  return wrapper;
 };
