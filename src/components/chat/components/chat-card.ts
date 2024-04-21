@@ -158,6 +158,7 @@ export default class Chat extends BaseComponent {
 
     if (this.messagesComponents.length > 0 && this.messagesComponents[0] !== undefined) {
       this.messagesComponents[0].addClassFirstMsg();
+      emitter.emit('change-counter', login);
 
       if (!msg.status.isReaded && hasDivider) {
         const data = store.users.getChatData(login);
