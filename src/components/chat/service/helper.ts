@@ -50,6 +50,7 @@ export const calculateActionsPosition = (event: Event, chatCard: HTMLElement): R
 
     const width = 128;
     const height = 80;
+
     const chat = chatCard.getBoundingClientRect();
 
     if (event.pageX + width > Math.ceil(chat.right)) {
@@ -62,13 +63,8 @@ export const calculateActionsPosition = (event: Event, chatCard: HTMLElement): R
       right = `${null}`;
     }
 
-    if (event.pageY + height > Math.ceil(chat.top)) {
-      top = '0';
-      bottom = `${null}`;
-    }
-
-    if (event.pageY + height < Math.ceil(chat.bottom)) {
-      top = `${null}`;
+    if (event.pageY + height > Math.ceil(chat.bottom)) {
+      top = `${event.layerY - height}px`;
       bottom = '0';
     }
   }
