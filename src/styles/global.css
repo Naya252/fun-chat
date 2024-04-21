@@ -103,6 +103,7 @@
 
 .message {
   max-width: 66.6%;
+  position: relative;
 }
 
 .divider {
@@ -127,4 +128,9 @@
   color: #38bdf8;
   padding: 0 0.5rem;
   background-color: #28313f;
+}
+
+.action-card {
+  position: absolute;
+  z-index: 50;
 }
