@@ -5,7 +5,7 @@ import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
 import alerts from './components/alert/alert';
 import { getUser } from './repositories/user-repository';
-import { getActiveUsers, getInactiveUsers } from './repositories/front-requests';
+import { getActiveUsers, getInactiveUsers, getHistory } from './repositories/front-requests';
 import emitter from './utils/event-emitter';
 
 import AppRouter from './router/router';
@@ -47,6 +47,9 @@ export default class App {
     emitter.on('disconect-ws', () => this.disconnected());
     emitter.on('connect-ws', () => this.connected());
     emitter.on('login', () => getUsers());
+    emitter.on('get-user-history', (login) => getHistory(login));
+
+    document.addEventListener('click', (event: Event) => emitter.emit('click-document', event));
   }
 
   public init(): void {
