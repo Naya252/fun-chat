@@ -34,8 +34,8 @@ class WS {
   }
 
   public handleError(): void {
-    this.ws.onerror = (e: Event): void => {
-      console.log('ERROR', e);
+    this.ws.onerror = (): void => {
+      // console.log('ERROR', e);
     };
   }
 
