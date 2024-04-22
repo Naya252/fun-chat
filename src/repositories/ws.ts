@@ -1,6 +1,6 @@
 import { callMessages, openedWs, closedWs } from '@/services/service';
 
-const BASE_URL = `ws://localhost:4000/`;
+const BASE_URL = `ws://127.0.0.1:4000/`;
 
 class WS {
   private ws: WebSocket;
