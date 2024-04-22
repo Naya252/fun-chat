@@ -34,13 +34,15 @@ export const createSide = (): BaseComponent => {
     'flex',
     'flex-col',
     'w-full',
-    'mr-6',
-    'my-6',
-
+    'mr-0',
+    'my-0',
+    'sm:mr-6',
+    'sm:my-6',
     'rounded-xl',
     'bg-white/[.04]',
     'shadow-md',
     'overflow-auto',
+    'side-users',
   ]);
   return sideCard;
 };
@@ -103,8 +105,10 @@ export const createChat = (): BaseComponent => {
     'flex',
     'flex-col',
     'w-full',
-    'ml-6',
-    'my-6',
+    'mx-2',
+    'my-4',
+    'sm:ml-6',
+    'sm:my-6',
     'rounded-xl',
     'bg-white/[.04]',
     'shadow-md',
@@ -135,6 +139,7 @@ export const selectMember = (e: Event): void => {
   if (wrapper !== null) {
     emitter.emit('remove-selected-class');
     wrapper.classList.add('selected-user');
+    emitter.emit('hide-menu');
   }
   if (member) {
     const login = member.getAttribute('id');

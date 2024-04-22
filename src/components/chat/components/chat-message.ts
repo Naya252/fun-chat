@@ -68,7 +68,7 @@ export default class ChatMessage extends BaseComponent {
 
   private changeClasses(msg: Message): void {
     if (msg.from === store.user.getLogin()) {
-      this.message.setClasses(['ml-auto', 'bg-gray-700']);
+      this.message.setClasses(['ml-auto', 'bg-gray-700', 'pointer']);
 
       this.setStatus(msg);
     } else {

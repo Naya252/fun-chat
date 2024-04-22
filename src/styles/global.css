@@ -110,11 +110,6 @@
   display: none !important;
 }
 
-.message {
-  position: relative;
-  max-width: 66.6%;
-}
-
 .member-login,
 .user-login {
   overflow: hidden !important;
@@ -172,4 +167,67 @@
   justify-content: center;
   padding: 8px !important;
   border-radius: 50%;
+}
+
+/* .chat-wrapper {
+  max-width: calc(66.6% - 30px) !important;
+  min-width: calc(66.6% - 30px) !important;
+  width: calc(66.6% - 30px) !important;
+  flex-grow: 1;
+} */
+
+.side-users {
+}
+
+.chat-page {
+  position: relative;
+}
+
+.message {
+  position: relative;
+  max-width: 66.6%;
+}
+
+.burger-btn {
+  display: none;
+}
+.pointer {
+  cursor: pointer;
+}
+
+@media only screen and (max-width: 639px) {
+  .side-card {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 200;
+    width: 100%;
+    height: 100%;
+    background-color: #28313f;
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+
+  .show-menu {
+    transform: translateX(0) !important;
+    transition: all 0.3s ease;
+    opacity: 1;
+  }
+
+  .chat-wrapper {
+    min-width: 100%;
+  }
+
+  .message {
+    max-width: 100%;
+  }
+
+  .chat-header {
+    padding-bottom: 16px;
+  }
+
+  .burger-btn {
+    display: inline-flex;
+    margin-left: 8px;
+  }
 }

@@ -24,7 +24,7 @@ export default class Chat extends BaseComponent {
   private divider: BaseComponent | null;
 
   constructor() {
-    super('div', ['flex', 'w-2/3']);
+    super('div', ['flex', 'w-full', 'sm:w-2/3', 'chat-wrapper']);
 
     this.messageActions = new ChatMessageActions();
     this.messageActions.addListener('click', (event: Event) => this.setMessage(event));

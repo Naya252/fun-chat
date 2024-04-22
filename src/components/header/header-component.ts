@@ -15,11 +15,30 @@ const createTitle = (): BaseComponent => {
   return container;
 };
 
+const createMenuBtn = (): BaseComponent => {
+  const button = new BaseComponent('button', [
+    'relative',
+    'rounded-md',
+    'text-gray-300',
+    'hover:text-white',
+    'focus:outline-none',
+    'focus:ring-2',
+    'focus:ring-white',
+    'burger-btn',
+  ]);
+  const content = `<span class="absolute -inset-2.5"></span>
+  <span class="sr-only">Close panel</span>
+  <svg viewBox="0 0 24 24" class="w-6 h-6"><path fill="currentColor" d="M3,6H21V8H3V6M3,11H21V13H3V11M3,16H21V18H3V16Z"></path></svg>`;
+  button.setHTML(content);
+  return button;
+};
+
 export default class Header extends BaseComponent {
   private router: AppRouter;
   private links: BaseComponent[];
   private linksWrapper: BaseComponent;
   private userLogin: BaseComponent;
+  private menuBtn: BaseComponent;
 
   constructor(router: AppRouter) {
     super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'shadow-md']);
@@ -38,6 +57,13 @@ export default class Header extends BaseComponent {
     this.userLogin = new BaseComponent('li', ['user-login']);
     this.links = this.createLinks();
     this.linksWrapper = this.createNav();
+
+    this.menuBtn = createMenuBtn();
+    this.menuBtn.addListener('click', () => {
+      emitter.emit('toggle-menu');
+    });
+
+    title.append(this.menuBtn);
 
     container.append(subcontainer);
     subcontainer.append(title, this.linksWrapper);

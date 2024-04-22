@@ -7,7 +7,7 @@ class ChatPage extends BaseComponent {
   private chat: Chat;
 
   constructor() {
-    super('div', ['mx-auto', 'container', 'flex', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
+    super('div', ['mx-auto', 'container', 'flex', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8', 'chat-page']);
 
     this.side = new Users();
     this.chat = new Chat();

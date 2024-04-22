@@ -19,7 +19,7 @@ export default class Users extends BaseComponent {
   private searchField: BaseInput;
 
   constructor() {
-    super('div', ['flex', 'w-1/3', 'min-w-40']);
+    super('div', ['flex', 'w-1/3', 'min-w-40', 'side-card']);
 
     this.side = createSide();
     this.users = createUsers([]);
@@ -38,7 +38,20 @@ export default class Users extends BaseComponent {
     emitter.on('change-users', () => this.changeUsers(getMembers()));
     emitter.on('change-counter', (login) => this.changeCounter(login));
     emitter.on('remove-selected-class', () => this.removeSelectedClass());
+    emitter.on('show-menu', () => this.setClasses(['show-menu']));
+    emitter.on('hide-menu', () => this.removeClasses(['show-menu']));
+    emitter.on('toggle-menu', () => this.changeMenu());
     this.changeUsers(getMembers());
+  }
+
+  private changeMenu(): void {
+    const el = this.getElement();
+
+    if (el.classList.contains('show-menu')) {
+      emitter.emit('hide-menu');
+    } else {
+      emitter.emit('show-menu');
+    }
   }
 
   private changeUsers(users: Member[]): void {

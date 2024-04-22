@@ -13,7 +13,7 @@ export default class ChatMemberInfo extends BaseComponent {
   private memberStatus: BaseComponent;
 
   constructor() {
-    super('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6']);
+    super('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6', 'chat-header']);
 
     this.memberLogin = createMemberLogin();
     this.memberStatus = new BaseComponent('p', ['font-semibold', 'text-gray-300']);

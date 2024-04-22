@@ -77,7 +77,7 @@ class LoginPage extends BaseComponent {
 
     this.loginForm = new BaseComponent<HTMLFormElement>(
       'form',
-      ['space-y-6', 'sm:mx-auto', 'sm:w-full', 'sm:max-w-sm'],
+      ['space-y-6', 'mx-3', 'sm:mx-auto', 'sm:w-full', 'sm:max-w-sm'],
       { action: '#', method: 'POST' },
     );
 
