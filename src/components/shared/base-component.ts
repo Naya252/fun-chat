@@ -15,6 +15,7 @@ const formatClasses = (classNames: (string | undefined)[]): string[] => {
 
 export default class BaseComponent<T extends HTMLElement = HTMLElement> {
   protected readonly element: T;
+  protected children: (BaseComponent | HTMLElement)[] = [];
 
   constructor(
     tag: keyof HTMLElementTagNameMap,
@@ -88,12 +89,18 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
 
   public append(...children: Array<HTMLElement | BaseComponent>): void {
     children.forEach((child) => {
+      this.children.push(child);
+
       if (child instanceof HTMLElement) {
         this.element.append(child);
       } else if (child instanceof BaseComponent) {
         this.element.append(child.element);
       }
     });
+  }
+
+  public getChildrenComponents(): (BaseComponent | HTMLElement)[] {
+    return this.children;
   }
 
   public getChildren(): NodeListOf<ChildNode> {
@@ -143,7 +150,11 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
   }
 
   public replaceChildren(...children: Array<HTMLElement | BaseComponent>): void {
+    this.removeChildren();
+    this.children = [];
     const elements = children.map((child) => {
+      this.children.push(child);
+
       if (child instanceof BaseComponent) {
         return child.element;
       }
@@ -152,7 +163,14 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
     this.element.replaceChildren(...elements);
   }
 
+  public removeChildren(): void {
+    this.children.forEach((child) => {
+      child.remove();
+    });
+  }
+
   public remove(): void {
+    this.removeChildren();
     this.element.remove();
   }
 }
