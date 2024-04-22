@@ -25,6 +25,7 @@ const createMenuBtn = (): BaseComponent => {
     'focus:ring-2',
     'focus:ring-white',
     'burger-btn',
+    'hide',
   ]);
   const content = `<span class="absolute -inset-2.5"></span>
   <span class="sr-only">Close panel</span>
@@ -70,6 +71,17 @@ export default class Header extends BaseComponent {
     this.append(container);
     emitter.on('login', () => this.changeLinks(ROUTES.Chat));
     emitter.on('logout', () => this.goToLogin(ROUTES.Login));
+    emitter.on('change-route', () => this.changeBurgerBtn());
+  }
+
+  private changeBurgerBtn(): void {
+    const currentPath = this.router.getActiveRoute();
+    if (currentPath === ROUTES.Chat) {
+      this.menuBtn.removeClasses(['hide']);
+    } else {
+      this.menuBtn.setClasses(['hide']);
+      emitter.emit('hide-menu');
+    }
   }
 
   private createNav(): BaseComponent {

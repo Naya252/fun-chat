@@ -1,6 +1,7 @@
 import Router, { type Route } from '@/lib/router';
 import type BaseComponent from '@/components/shared/base-component';
 import store from '@/store/store';
+import emitter from '@/utils/event-emitter';
 import { ROUTES } from './pathes';
 
 export default class AppRouter extends Router {
@@ -58,6 +59,7 @@ export default class AppRouter extends Router {
 
     super.navigateTo(newRoute);
     this.activeRoute = newRoute;
+    emitter.emit('change-route');
   }
 
   public logout(): void {
