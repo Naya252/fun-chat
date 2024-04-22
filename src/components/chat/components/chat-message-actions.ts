@@ -17,6 +17,8 @@ const createButton = (title: string, className: string): BaseButton => {
 };
 
 export default class ChatMessageActions extends BaseComponent {
+  private destroyFns: VoidFunction[] = [];
+
   constructor() {
     super('div', [
       'w-32',
@@ -34,7 +36,12 @@ export default class ChatMessageActions extends BaseComponent {
     const removeBtn = createButton('Remove', 'remove-message');
 
     this.append(editBtn, removeBtn);
-    emitter.on('click-document', (event) => this.checkActions(event));
+    this.destroyFns = [emitter.on('click-document', (event) => this.checkActions(event))];
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   public checkActions(event: unknown): void {

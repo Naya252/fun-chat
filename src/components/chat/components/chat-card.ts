@@ -23,6 +23,8 @@ export default class Chat extends BaseComponent {
   private messages: Message[];
   private divider: BaseComponent | null;
 
+  private destroyFns: VoidFunction[] = [];
+
   constructor() {
     super('div', ['flex', 'w-full', 'sm:w-2/3', 'chat-wrapper']);
 
@@ -44,17 +46,20 @@ export default class Chat extends BaseComponent {
     this.chat = createChat();
     this.chat.append(this.memberInfo, this.messagesCard, this.chatActions);
     this.append(this.chat);
-    this.addEmitterListeners();
+    this.destroyFns = [
+      emitter.on('select-member', () => this.drawMemberChat()),
+      emitter.on('get-message', (message) => this.addNewMessageToChat(message)),
+      emitter.on('add-divider', (element) => this.addDivider(element)),
+      emitter.on('clean-divider', (data) => this.removeDivider(data)),
+      emitter.on('change-status', (element) => this.changeStatus(element)),
+    ];
 
     this.divider = null;
   }
 
-  private addEmitterListeners(): void {
-    emitter.on('select-member', () => this.drawMemberChat());
-    emitter.on('get-message', (message) => this.addNewMessageToChat(message));
-    emitter.on('add-divider', (element) => this.addDivider(element));
-    emitter.on('clean-divider', (data) => this.removeDivider(data));
-    emitter.on('change-status', (element) => this.changeStatus(element));
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   private setMessage(event: Event): void {

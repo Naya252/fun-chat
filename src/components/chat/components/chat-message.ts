@@ -22,6 +22,7 @@ export default class ChatMessage extends BaseComponent {
   private content: BaseComponent;
   private status: BaseComponent;
   private edited: BaseComponent;
+  private destroyFns: VoidFunction[] = [];
 
   constructor(msg: Message, firstNewMessage: string) {
     super('div', ['pt-4', 'pb-1', 'flex'], { id: msg.id });
@@ -51,7 +52,12 @@ export default class ChatMessage extends BaseComponent {
     this.setEdited(msg);
 
     this.message.append(header, this.content, footer);
-    emitter.on('finish-edit', () => this.cancelEdit());
+    this.destroyFns = [emitter.on('finish-edit', () => this.cancelEdit())];
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   public changeDivider(id: string, firstNewMessage: string): void {

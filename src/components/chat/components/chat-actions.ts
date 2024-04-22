@@ -49,6 +49,7 @@ export default class ChatActions extends BaseComponent {
   private sendButton: BaseButton;
   private cancelButton: BaseButton;
   private isEdit: boolean;
+  private destroyFns: VoidFunction[] = [];
 
   constructor() {
     super('div', ['flex', 'max-h-12', 'chat-actions']);
@@ -64,7 +65,12 @@ export default class ChatActions extends BaseComponent {
 
     this.append(this.textField, this.sendButton, this.cancelButton);
     this.addSendListener();
-    emitter.on('select-member', () => this.activateActions());
+    this.destroyFns = [emitter.on('select-member', () => this.activateActions())];
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   private addSendListener(): void {

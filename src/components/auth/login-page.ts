@@ -69,6 +69,7 @@ class LoginPage extends BaseComponent {
   private submitBtn: BaseButton;
   public isSubmit = false;
   private onChangeRoute: (route: string, isAuth: boolean) => void;
+  private destroyFns: VoidFunction[] = [];
 
   constructor(routerPush: (route: string, isAuth: boolean) => void) {
     super('div', ['mx-auto', 'container', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
@@ -82,7 +83,6 @@ class LoginPage extends BaseComponent {
     );
 
     this.login = createLogin();
-
     this.password = createPassword();
 
     this.submitBtn = new BaseButton('submit', 'Login', [
@@ -96,17 +96,24 @@ class LoginPage extends BaseComponent {
     this.submitBtn.addListener('click', (e) => {
       this.submitLoginForm(e);
     });
-
     this.loginForm.append(title, this.login, this.password, this.submitBtn);
     this.append(this.loginForm);
     this.validateInput();
-
     document.addEventListener('keypress', (event) => {
       if (event.key === 'Enter' && !store.user.isAuth()) {
         event.preventDefault();
         this.submitLoginForm(event);
       }
     });
+    this.destroyFns = [
+      emitter.on('login', () => this.goToChat()),
+      emitter.on('loginError', () => this.removeDisabled()),
+    ];
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   public submitLoginForm(e: Event): void {
@@ -116,8 +123,6 @@ class LoginPage extends BaseComponent {
 
       const login = this.login.getValue();
       const password = this.password.getValue();
-      emitter.on('login', () => this.goToChat());
-      emitter.on('loginError', () => this.removeDisabled());
 
       repository.loginUser(login, password);
       store.user.setLogin(login);

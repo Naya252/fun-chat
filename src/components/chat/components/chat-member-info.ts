@@ -11,6 +11,7 @@ const createMemberLogin = (): BaseComponent => {
 export default class ChatMemberInfo extends BaseComponent {
   private memberLogin: BaseComponent;
   private memberStatus: BaseComponent;
+  private destroyFns: VoidFunction[] = [];
 
   constructor() {
     super('div', ['flex', 'w-full', 'justify-between', 'px-6', 'mt-6', 'chat-header']);
@@ -18,14 +19,21 @@ export default class ChatMemberInfo extends BaseComponent {
     this.memberLogin = createMemberLogin();
     this.memberStatus = new BaseComponent('p', ['font-semibold', 'text-gray-300']);
     this.append(this.memberLogin, this.memberStatus);
-    emitter.on('change-member-info', () => this.redrawMemberInfo());
-    emitter.on('change-users', (member) => this.checkMember(member));
+    this.destroyFns = [
+      emitter.on('change-member-info', () => this.redrawMemberInfo()),
+      emitter.on('change-users', (member) => this.checkMember(member)),
+    ];
   }
 
   private checkMember(member: unknown): void {
     if (isMember(member) && store.users.getSelectedMember().login === member.login) {
       this.redrawMemberInfo();
     }
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   private redrawMemberInfo(): void {

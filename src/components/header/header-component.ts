@@ -40,6 +40,7 @@ export default class Header extends BaseComponent {
   private linksWrapper: BaseComponent;
   private userLogin: BaseComponent;
   private menuBtn: BaseComponent;
+  private destroyFns: VoidFunction[] = [];
 
   constructor(router: AppRouter) {
     super('nav', ['sticky', 'top-0', 'z-40', 'w-full', 'backdrop-blur', 'shadow-md']);
@@ -69,9 +70,17 @@ export default class Header extends BaseComponent {
     container.append(subcontainer);
     subcontainer.append(title, this.linksWrapper);
     this.append(container);
-    emitter.on('login', () => this.changeLinks());
-    emitter.on('logout', () => this.goToLogin(ROUTES.Login));
-    emitter.on('change-route', () => this.changedPath());
+
+    this.destroyFns = [
+      emitter.on('login', () => this.changeLinks()),
+      emitter.on('logout', () => this.goToLogin(ROUTES.Login)),
+      emitter.on('change-route', () => this.changedPath()),
+    ];
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   private changedPath(): void {

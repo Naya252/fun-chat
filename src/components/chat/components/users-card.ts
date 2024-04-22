@@ -17,6 +17,7 @@ export default class Users extends BaseComponent {
   private users: BaseComponent[];
   private userWrapper: BaseComponent;
   private searchField: BaseInput;
+  private destroyFns: VoidFunction[] = [];
 
   constructor() {
     super('div', ['flex', 'w-1/3', 'min-w-40', 'side-card']);
@@ -35,13 +36,20 @@ export default class Users extends BaseComponent {
     this.side.append(this.searchField, this.userWrapper);
     this.append(this.side);
 
-    emitter.on('change-users', () => this.changeUsers(getMembers()));
-    emitter.on('change-counter', (login) => this.changeCounter(login));
-    emitter.on('remove-selected-class', () => this.removeSelectedClass());
-    emitter.on('show-menu', () => this.setClasses(['show-menu']));
-    emitter.on('hide-menu', () => this.removeClasses(['show-menu']));
-    emitter.on('toggle-menu', () => this.changeMenu());
+    this.destroyFns = [
+      emitter.on('change-users', () => this.changeUsers(getMembers())),
+      emitter.on('change-counter', (login) => this.changeCounter(login)),
+      emitter.on('remove-selected-class', () => this.removeSelectedClass()),
+      emitter.on('show-menu', () => this.setClasses(['show-menu'])),
+      emitter.on('hide-menu', () => this.removeClasses(['show-menu'])),
+      emitter.on('toggle-menu', () => this.changeMenu()),
+    ];
     this.changeUsers(getMembers());
+  }
+
+  public remove(): void {
+    this.destroyFns.forEach((fn) => fn());
+    super.remove();
   }
 
   private changeMenu(): void {
