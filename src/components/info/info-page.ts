@@ -4,7 +4,7 @@ class InfoPage extends BaseComponent {
   constructor() {
     super('div', ['mx-auto', 'container', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8', 'select-none']);
 
-    const card = new BaseComponent('div', ['text-center', 'max-w-80', 'mx-auto', 'py-24', 'sm:py-32', 'lg:px-8']);
+    const card = new BaseComponent('div', ['text-center', 'max-w-80', 'mx-auto', 'py-24', 'sm:py-32', 'lg:px-4']);
     const info = new BaseComponent('p', ['text-base', 'font-semibold', 'text-sky-500'], {}, 'author: Naya252');
     const title = new BaseComponent(
       'h1',
