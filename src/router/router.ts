@@ -26,6 +26,7 @@ export default class AppRouter extends Router {
 
       async (route: Route) => {
         const component = await route.component();
+        routerOutlet.getChildrenComponents().forEach((el) => el.remove());
         routerOutlet.replaceChildren(component);
       },
       async () => {

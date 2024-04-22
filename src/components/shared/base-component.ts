@@ -150,7 +150,6 @@ export default class BaseComponent<T extends HTMLElement = HTMLElement> {
   }
 
   public replaceChildren(...children: Array<HTMLElement | BaseComponent>): void {
-    this.removeChildren();
     this.children = [];
     const elements = children.map((child) => {
       this.children.push(child);
