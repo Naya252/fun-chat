@@ -69,13 +69,18 @@ export default class Header extends BaseComponent {
     container.append(subcontainer);
     subcontainer.append(title, this.linksWrapper);
     this.append(container);
-    emitter.on('login', () => this.changeLinks(ROUTES.Chat));
+    emitter.on('login', () => this.changeLinks());
     emitter.on('logout', () => this.goToLogin(ROUTES.Login));
-    emitter.on('change-route', () => this.changeBurgerBtn());
+    emitter.on('change-route', () => this.changedPath());
   }
 
-  private changeBurgerBtn(): void {
+  private changedPath(): void {
     const currentPath = this.router.getActiveRoute();
+    this.changeBurgerBtn(currentPath);
+    this.changeActiveLink(currentPath);
+  }
+
+  private changeBurgerBtn(currentPath: string): void {
     if (currentPath === ROUTES.Chat) {
       this.menuBtn.removeClasses(['hide']);
     } else {
@@ -94,7 +99,6 @@ export default class Header extends BaseComponent {
   }
 
   private goToLogin(route: string): void {
-    this.changeActiveLink(route);
     this.changeLoginLink();
     const isAuth = store.user.isAuth();
     this.router.push(route, isAuth);
@@ -129,7 +133,6 @@ export default class Header extends BaseComponent {
           }
 
           this.router.push(route, isAuth);
-          this.changeActiveLink(this.router.getActiveRoute());
         }
       });
 
@@ -140,8 +143,7 @@ export default class Header extends BaseComponent {
     return links;
   }
 
-  private changeLinks(route: string): void {
-    this.changeActiveLink(route);
+  private changeLinks(): void {
     this.changeLoginLink();
   }
 
