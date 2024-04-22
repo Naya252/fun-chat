@@ -29,6 +29,10 @@
   margin-left: 8px !important;
 }
 
+.select-none {
+  user-select: none;
+}
+
 .header-container {
   overflow: hidden;
 }
@@ -115,6 +119,7 @@
   overflow: hidden !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
+  user-select: none;
 }
 
 .content-msg {
@@ -167,16 +172,7 @@
   justify-content: center;
   padding: 8px !important;
   border-radius: 50%;
-}
-
-/* .chat-wrapper {
-  max-width: calc(66.6% - 30px) !important;
-  min-width: calc(66.6% - 30px) !important;
-  width: calc(66.6% - 30px) !important;
-  flex-grow: 1;
-} */
-
-.side-users {
+  user-select: none;
 }
 
 .chat-page {
@@ -190,7 +186,9 @@
 
 .burger-btn {
   display: none;
+  user-select: none;
 }
+
 .pointer {
   cursor: pointer;
 }
