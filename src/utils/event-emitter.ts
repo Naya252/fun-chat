@@ -7,16 +7,22 @@ class EventEmitter {
     this.events = {};
   }
 
-  public on(eventName: string, fn: EventHandler): void {
+  public on(eventName: string, fn: EventHandler): VoidFunction {
     if (!this.events[eventName]) {
       this.events[eventName] = [];
     }
     this.events[eventName]?.push(fn);
+
+    return () => {
+      this.off(eventName, fn);
+    };
   }
 
   public off(eventName: string, fn: EventHandler): void {
-    if (this.events[eventName]) {
-      this.events[eventName]?.filter((existFn) => existFn !== fn);
+    const eventsArr = this.events[eventName];
+
+    if (eventsArr) {
+      this.events[eventName] = eventsArr.filter((existFn) => existFn !== fn);
     }
   }
 
