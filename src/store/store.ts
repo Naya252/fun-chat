@@ -12,7 +12,6 @@ class Store {
 
   public cleanStore(): void {
     this.users = new Users();
-    console.log(this.users);
   }
 }
 
