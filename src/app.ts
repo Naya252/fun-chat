@@ -16,6 +16,10 @@ const getUsers = (): void => {
   getInactiveUsers();
 };
 
+const cleanStore = (): void => {
+  store.cleanStore();
+};
+
 export default class App {
   private readonly router: AppRouter;
 
@@ -47,6 +51,7 @@ export default class App {
     emitter.on('disconect-ws', () => this.disconnected());
     emitter.on('connect-ws', () => this.connected());
     emitter.on('login', () => getUsers());
+    emitter.on('logout', () => cleanStore());
     emitter.on('get-user-history', (login) => getHistory(login));
 
     document.addEventListener('click', (event: Event) => emitter.emit('click-document', event));

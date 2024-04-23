@@ -9,6 +9,11 @@ class Store {
     this.user = new User();
     this.users = new Users();
   }
+
+  public cleanStore(): void {
+    this.users = new Users();
+    console.log(this.users);
+  }
 }
 
 const store = new Store();
