@@ -69,19 +69,22 @@ export default class ChatActions extends BaseComponent {
   }
 
   public remove(): void {
+    document.removeEventListener('keydown', this.handleKeyDown);
     this.destroyFns.forEach((fn) => fn());
     super.remove();
   }
 
   private addSendListener(): void {
     this.sendButton.addListener('click', () => this.sendMessage());
-    document.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter' && store.user.isAuth()) {
-        event.preventDefault();
-        this.sendMessage();
-      }
-    });
+    document.addEventListener('keydown', this.handleKeyDown);
   }
+
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === 'Enter' && store.user.isAuth()) {
+      event.preventDefault();
+      this.sendMessage();
+    }
+  };
 
   private sendMessage(): void {
     // const message = this.textField.getValue().trim();

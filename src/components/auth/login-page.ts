@@ -75,16 +75,13 @@ class LoginPage extends BaseComponent {
     super('div', ['mx-auto', 'container', 'max-w-7xl', 'px-2', 'sm:px-6', 'lg:px-8']);
     this.onChangeRoute = routerPush;
     const title = createTitle();
-
     this.loginForm = new BaseComponent<HTMLFormElement>(
       'form',
       ['space-y-6', 'mx-3', 'sm:mx-auto', 'sm:w-full', 'sm:max-w-sm'],
       { action: '#', method: 'POST' },
     );
-
     this.login = createLogin();
     this.password = createPassword();
-
     this.submitBtn = new BaseButton('submit', 'Login', [
       'bg-sky-600',
       'hover:bg-sky-500',
@@ -94,24 +91,30 @@ class LoginPage extends BaseComponent {
       'disabled:focus:bg-sky-600',
     ]);
     this.submitBtn.addListener('click', (e) => {
+      e.preventDefault();
       this.submitLoginForm(e);
     });
     this.loginForm.append(title, this.login, this.password, this.submitBtn);
     this.append(this.loginForm);
     this.validateInput();
-    document.addEventListener('keypress', (event) => {
-      if (event.key === 'Enter' && !store.user.isAuth()) {
-        event.preventDefault();
-        this.submitLoginForm(event);
-      }
-    });
+
+    document.addEventListener('keydown', this.handleKeyDown);
+
     this.destroyFns = [
       emitter.on('login', () => this.goToChat()),
       emitter.on('loginError', () => this.removeDisabled()),
     ];
   }
 
+  private handleKeyDown = (event: KeyboardEvent): void => {
+    if (event.key === 'Enter' && !store.user.isAuth()) {
+      event.preventDefault();
+      this.submitLoginForm(event);
+    }
+  };
+
   public remove(): void {
+    document.removeEventListener('keydown', this.handleKeyDown);
     this.destroyFns.forEach((fn) => fn());
     super.remove();
   }
@@ -136,6 +139,9 @@ class LoginPage extends BaseComponent {
   }
 
   public goToChat(): void {
+    this.isSubmit = false;
+    this.loginForm.removeClasses(['was-validated']);
+
     this.removeDisabled();
     const isAuth = store.user.isAuth();
 
