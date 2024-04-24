@@ -123,8 +123,20 @@ const changeError = (data: Record<string, string> | Record<string, Record<string
   if (!isError(data)) {
     throw new Error('payload is not error');
   }
+
   emitter.emit('loginError');
   alerts.addAlert('warning', data.error);
+
+  if (data.error === 'a user with this login is already authorized') {
+    store.user.setLogin('');
+    store.user.setPassword('');
+    store.user.setAuth(false);
+    removeUser();
+
+    setTimeout(() => {
+      emitter.emit('logout');
+    }, 100);
+  }
 };
 
 export const callMessages = (data: string): void => {
