@@ -4,7 +4,7 @@ import BaseComponent from './components/shared/base-component';
 import Header from './components/header/header-component';
 import Footer from './components/footer/footer-component';
 import alerts from './components/alert/alert';
-import { getUser } from './repositories/user-repository';
+import { getUser, removeSelectedMember } from './repositories/user-repository';
 import { getActiveUsers, getInactiveUsers, getHistory } from './repositories/front-requests';
 import emitter from './utils/event-emitter';
 
@@ -66,6 +66,8 @@ export default class App {
 
   private disconnected(): void {
     this.appContainer.setClasses(['show-connecting']);
+    removeSelectedMember();
+    cleanStore();
   }
 
   private connected(): void {

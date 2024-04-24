@@ -1,7 +1,7 @@
 import alerts from '@/components/alert/alert';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
-import { setUser, removeUser } from '@/repositories/user-repository';
+import { setUser, removeUser, removeSelectedMember } from '@/repositories/user-repository';
 import {
   isAuth,
   isError,
@@ -30,7 +30,7 @@ const changeAuth = (data: Record<string, string> | Record<string, Record<string,
     store.user.setLogin('');
     store.user.setPassword('');
     removeUser();
-
+    removeSelectedMember();
     emitter.emit('logout');
   }
 };

@@ -3,6 +3,7 @@ import emitter from '@/utils/event-emitter';
 import { type Member } from '@/types/api-types';
 import type BaseInput from '@/components/shared/base-input/base-input';
 import store from '@/store/store';
+import { getSelectedMember } from '@/repositories/user-repository';
 import {
   createSide,
   createUsersWrapper,
@@ -45,6 +46,12 @@ export default class Users extends BaseComponent {
       emitter.on('toggle-menu', () => this.changeMenu()),
     ];
     this.changeUsers(getMembers());
+
+    setTimeout(() => {
+      const selectedMember = getSelectedMember();
+      const selectedUserComponent = this.users.find((el) => el.getId().includes(selectedMember));
+      selectedUserComponent?.getElement().click();
+    }, 0);
   }
 
   public remove(): void {

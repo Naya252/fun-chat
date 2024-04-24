@@ -28,3 +28,30 @@ export const setUser = (userData: string): void => {
 export const removeUser = (): void => {
   sessionStorage.removeItem('user');
 };
+
+export const getSelectedMember = (): string => {
+  const data: unknown = sessionStorage.getItem('selectedMember');
+  let selectedMember;
+
+  if (data === null || data === undefined) {
+    selectedMember = '';
+  }
+
+  if (data !== null && data !== undefined && typeof data === 'string') {
+    selectedMember = data;
+  }
+
+  if (typeof selectedMember !== 'string') {
+    throw new Error('Selected member not correct type');
+  }
+
+  return selectedMember;
+};
+
+export const setSelectedMember = (selectedMember: string): void => {
+  sessionStorage.setItem('selectedMember', selectedMember);
+};
+
+export const removeSelectedMember = (): void => {
+  sessionStorage.removeItem('selectedMember');
+};

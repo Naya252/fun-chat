@@ -3,6 +3,7 @@ import BaseInput from '@/components/shared/base-input/base-input';
 import type { Member } from '@/types/api-types';
 import store from '@/store/store';
 import emitter from '@/utils/event-emitter';
+import { setSelectedMember } from '@/repositories/user-repository';
 
 export const createTextField = (
   placeholder: string,
@@ -135,16 +136,18 @@ export const selectMember = (e: Event): void => {
     throw new Error('not member');
   }
   const wrapper = target.closest('.member');
-  const member = target.closest('.member button');
+  const member = target.closest('.member button') || wrapper?.firstChild;
   if (wrapper !== null) {
     emitter.emit('remove-selected-class');
     wrapper.classList.add('selected-user');
     emitter.emit('hide-menu');
   }
-  if (member) {
+
+  if (member !== null && member !== undefined && member instanceof HTMLElement) {
     const login = member.getAttribute('id');
     const isActive = member.parentElement?.classList.contains('active');
     store.users.setSelectedMember({ login: login || '', isLogined: isActive || false });
+    setSelectedMember(member.textContent || '');
     emitter.emit('select-member');
   }
 };
